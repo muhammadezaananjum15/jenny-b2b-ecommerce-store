@@ -162,6 +162,7 @@
         border-color: #ddd;
         background: #f5f5f5;
     }
+    .payment-option.selected,
     .payment-option:has(input:checked) {
         border-color: var(--primary-gold);
         background: #fff8e6;
@@ -179,8 +180,159 @@
         text-align: center;
     }
     .payment-option span {
-        font-weight: 500;
+        font-weight: 600;
         color: var(--dark-black);
+    }
+
+    /* --- EXPANDABLE PAYMENT DETAILS --- */
+    .payment-details-wrapper {
+        margin-top: 20px;
+    }
+    .payment-details-box {
+        display: none;
+        animation: fadeIn 0.3s ease;
+    }
+    .payment-details-box.active {
+        display: block;
+    }
+    .payment-info-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 20px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        position: relative;
+        overflow: hidden;
+    }
+    .payment-info-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; width: 5px; height: 100%;
+        background: var(--primary-gold);
+    }
+    .payment-info-card.easypaisa-info::before { background: #00B140; }
+    .payment-info-card.jazzcash-info::before { background: #FF0000; }
+    .payment-info-card.bank-info::before { background: #1B365D; }
+    
+    .info-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 16px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    .payment-badge-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        color: #fff;
+        flex-shrink: 0;
+    }
+    .ep-badge { background: linear-gradient(135deg, #00B140, #008730); }
+    .jc-badge { background: linear-gradient(135deg, #FF0000, #C00000); }
+    .bank-badge { background: linear-gradient(135deg, #1B365D, #0A192F); }
+    .cod-badge { background: linear-gradient(135deg, var(--primary-gold), #d19c00); color: #111; }
+    
+    .info-header h4 {
+        margin: 0;
+        font-size: 1.05rem;
+        color: var(--dark-black);
+        font-family: var(--font-heading);
+    }
+    .status-verified {
+        font-size: 0.78rem;
+        color: #27ae60;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        margin-top: 2px;
+    }
+    
+    .acc-details-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 12px 20px;
+        background: #f8fafc;
+        padding: 14px;
+        border-radius: 10px;
+        margin-bottom: 16px;
+        border: 1px solid #edf2f7;
+    }
+    .acc-item {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+    .acc-label {
+        font-size: 0.78rem;
+        color: #64748b;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .acc-value {
+        font-size: 0.95rem;
+        color: var(--dark-black);
+        font-weight: 700;
+    }
+    .acc-copy-wrap {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .btn-copy {
+        background: var(--primary-gold);
+        color: #111;
+        border: none;
+        padding: 3px 10px;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .btn-copy:hover {
+        background: #d19c00;
+        transform: translateY(-1px);
+    }
+    
+    .transfer-instructions {
+        background: #fffdf5;
+        border: 1px solid #fef3c7;
+        border-radius: 10px;
+        padding: 12px 16px;
+    }
+    .transfer-instructions h5 {
+        margin: 0 0 8px 0;
+        font-size: 0.88rem;
+        color: #92400e;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .transfer-instructions ol,
+    .transfer-instructions ul {
+        margin: 0;
+        padding-left: 20px;
+        font-size: 0.85rem;
+        color: #4b5563;
+        line-height: 1.5;
+    }
+    .transfer-instructions code {
+        background: #fee2e2;
+        color: #991b1b;
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-weight: 700;
     }
 
     /* --- STEP ACTIONS --- */
@@ -393,28 +545,178 @@
 
         <!-- STEP 2: PAYMENT METHOD -->
         <div class="checkout-step" id="step2">
-            <h3>Payment Method</h3>
-        <div class="payment-options">
-                <label class="payment-option selected">
-                    <input type="radio" name="paymentMethod" value="cod" checked>
+            <h3>Select Payment Method</h3>
+            <div class="payment-options">
+                <label class="payment-option selected" data-method="cod">
+                    <input type="radio" name="paymentMethod" value="cod" checked onchange="switchPaymentDetails('cod')">
                     <i class="fas fa-money-bill-wave"></i>
                     <span>Cash on Delivery (COD)</span>
                 </label>
-                <label class="payment-option">
-                    <input type="radio" name="paymentMethod" value="easypaisa">
-                    <i class="fas fa-mobile-alt"></i>
+                <label class="payment-option" data-method="easypaisa">
+                    <input type="radio" name="paymentMethod" value="easypaisa" onchange="switchPaymentDetails('easypaisa')">
+                    <i class="fas fa-mobile-alt" style="color:#00B140;"></i>
                     <span>EasyPaisa</span>
                 </label>
-                <label class="payment-option">
-                    <input type="radio" name="paymentMethod" value="jazzcash">
-                    <i class="fas fa-wallet"></i>
+                <label class="payment-option" data-method="jazzcash">
+                    <input type="radio" name="paymentMethod" value="jazzcash" onchange="switchPaymentDetails('jazzcash')">
+                    <i class="fas fa-wallet" style="color:#FF0000;"></i>
                     <span>JazzCash</span>
                 </label>
-                <label class="payment-option">
-                    <input type="radio" name="paymentMethod" value="bank">
-                    <i class="fas fa-university"></i>
+                <label class="payment-option" data-method="bank">
+                    <input type="radio" name="paymentMethod" value="bank" onchange="switchPaymentDetails('bank')">
+                    <i class="fas fa-university" style="color:#1B365D;"></i>
                     <span>Bank Transfer</span>
                 </label>
+            </div>
+
+            <!-- DYNAMIC PAYMENT DETAILS BOXES -->
+            <div class="payment-details-wrapper">
+                <!-- COD DETAILS -->
+                <div class="payment-details-box active" id="details-cod">
+                    <div class="payment-info-card">
+                        <div class="info-header">
+                            <div class="payment-badge-icon cod-badge"><i class="fas fa-truck"></i></div>
+                            <div>
+                                <h4>Cash on Delivery (COD)</h4>
+                                <span class="status-verified"><i class="fas fa-check-circle"></i> Pay upon parcel arrival</span>
+                            </div>
+                        </div>
+                        <div class="transfer-instructions">
+                            <h5><i class="fas fa-info-circle"></i> Payment Instructions:</h5>
+                            <ul>
+                                <li>Please keep exact cash ready upon delivery to avoid delays.</li>
+                                <li>Our delivery agent will collect the payment at your shipping address.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EASYPAISA DETAILS -->
+                <div class="payment-details-box" id="details-easypaisa">
+                    <div class="payment-info-card easypaisa-info">
+                        <div class="info-header">
+                            <div class="payment-badge-icon ep-badge"><i class="fas fa-mobile-alt"></i></div>
+                            <div>
+                                <h4>EasyPaisa Account Details</h4>
+                                <span class="status-verified"><i class="fas fa-shield-alt"></i> Verified Account</span>
+                            </div>
+                        </div>
+                        <div class="acc-details-grid">
+                            <div class="acc-item">
+                                <span class="acc-label">Account Title</span>
+                                <strong class="acc-value">Jenny's Cosmetics & Jewelry</strong>
+                            </div>
+                            <div class="acc-item">
+                                <span class="acc-label">EasyPaisa Mobile Number</span>
+                                <div class="acc-copy-wrap">
+                                    <strong class="acc-value">0300-1234567</strong>
+                                    <button type="button" class="btn-copy" onclick="copyToClipboard('03001234567', 'EasyPaisa Number Copied!')"><i class="fas fa-copy"></i> Copy</button>
+                                </div>
+                            </div>
+                            <div class="acc-item">
+                                <span class="acc-label">Account Ref</span>
+                                <strong class="acc-value">EP-03001234567</strong>
+                            </div>
+                        </div>
+                        <div class="transfer-instructions">
+                            <h5><i class="fas fa-info-circle"></i> How to pay via EasyPaisa:</h5>
+                            <ol>
+                                <li>Open your EasyPaisa app or dial <code>*786#</code>.</li>
+                                <li>Select <strong>Send Money</strong> &rarr; <strong>EasyPaisa Account</strong>.</li>
+                                <li>Enter Mobile Number: <code>03001234567</code> and total order amount.</li>
+                                <li>Keep the Transaction ID / receipt screenshot to share via WhatsApp.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- JAZZCASH DETAILS -->
+                <div class="payment-details-box" id="details-jazzcash">
+                    <div class="payment-info-card jazzcash-info">
+                        <div class="info-header">
+                            <div class="payment-badge-icon jc-badge"><i class="fas fa-wallet"></i></div>
+                            <div>
+                                <h4>JazzCash Account Details</h4>
+                                <span class="status-verified"><i class="fas fa-shield-alt"></i> Verified Account</span>
+                            </div>
+                        </div>
+                        <div class="acc-details-grid">
+                            <div class="acc-item">
+                                <span class="acc-label">Account Title</span>
+                                <strong class="acc-value">Jenny's Cosmetics & Jewelry</strong>
+                            </div>
+                            <div class="acc-item">
+                                <span class="acc-label">JazzCash Mobile Number</span>
+                                <div class="acc-copy-wrap">
+                                    <strong class="acc-value">0300-7654321</strong>
+                                    <button type="button" class="btn-copy" onclick="copyToClipboard('03007654321', 'JazzCash Number Copied!')"><i class="fas fa-copy"></i> Copy</button>
+                                </div>
+                            </div>
+                            <div class="acc-item">
+                                <span class="acc-label">Account Ref</span>
+                                <strong class="acc-value">JC-03007654321</strong>
+                            </div>
+                        </div>
+                        <div class="transfer-instructions">
+                            <h5><i class="fas fa-info-circle"></i> How to pay via JazzCash:</h5>
+                            <ol>
+                                <li>Open your JazzCash app or dial <code>*786#</code>.</li>
+                                <li>Select <strong>Send Money</strong> &rarr; <strong>JazzCash Mobile Account</strong>.</li>
+                                <li>Enter Mobile Number: <code>03007654321</code> and order total.</li>
+                                <li>Keep the Transaction ID / receipt screenshot to share via WhatsApp.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BANK TRANSFER DETAILS -->
+                <div class="payment-details-box" id="details-bank">
+                    <div class="payment-info-card bank-info">
+                        <div class="info-header">
+                            <div class="payment-badge-icon bank-badge"><i class="fas fa-university"></i></div>
+                            <div>
+                                <h4>Bank Transfer Account Details</h4>
+                                <span class="status-verified"><i class="fas fa-shield-alt"></i> Official Company Bank Account</span>
+                            </div>
+                        </div>
+                        <div class="acc-details-grid">
+                            <div class="acc-item">
+                                <span class="acc-label">Bank Name</span>
+                                <strong class="acc-value">Meezan Bank Limited</strong>
+                            </div>
+                            <div class="acc-item">
+                                <span class="acc-label">Account Title</span>
+                                <strong class="acc-value">Jenny's Cosmetics & Jewelry</strong>
+                            </div>
+                            <div class="acc-item">
+                                <span class="acc-label">Account Number</span>
+                                <div class="acc-copy-wrap">
+                                    <strong class="acc-value">01020304050607</strong>
+                                    <button type="button" class="btn-copy" onclick="copyToClipboard('01020304050607', 'Account Number Copied!')"><i class="fas fa-copy"></i> Copy</button>
+                                </div>
+                            </div>
+                            <div class="acc-item">
+                                <span class="acc-label">IBAN</span>
+                                <div class="acc-copy-wrap">
+                                    <strong class="acc-value">PK36MEZN0001020304050607</strong>
+                                    <button type="button" class="btn-copy" onclick="copyToClipboard('PK36MEZN0001020304050607', 'IBAN Copied!')"><i class="fas fa-copy"></i> Copy</button>
+                                </div>
+                            </div>
+                            <div class="acc-item">
+                                <span class="acc-label">Branch Code & City</span>
+                                <strong class="acc-value">0102 - Main Branch, Karachi</strong>
+                            </div>
+                        </div>
+                        <div class="transfer-instructions">
+                            <h5><i class="fas fa-info-circle"></i> Instructions for Bank Transfer:</h5>
+                            <ol>
+                                <li>Transfer total order amount via Internet Banking, Mobile App, or ATM.</li>
+                                <li>Use the IBAN or Account Number provided above.</li>
+                                <li>Please save the payment receipt or transaction screenshot for order verification.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="step-actions">
@@ -630,21 +932,79 @@
     function validateAndPlaceOrder() {
         // Call the existing placeOrder function from script.js
         if (typeof placeOrder === 'function') {
-            // Create a fake event object
             const fakeEvent = { preventDefault: function() {} };
             placeOrder(fakeEvent);
         } else {
-            // Fallback if placeOrder is not defined in script.js
             window.location.href = 'order-confirmation.php';
         }
     }
 
-    // --- 7. LOAD ORDER SUMMARY (FROM YOUR EXISTING JS) ---
+    // --- 8. SWITCH PAYMENT DETAILS BOX ---
+    function switchPaymentDetails(method) {
+        // Hide all detail boxes
+        document.querySelectorAll('.payment-details-box').forEach(box => {
+            box.classList.remove('active');
+        });
+        // Remove .selected from all option labels
+        document.querySelectorAll('.payment-option').forEach(opt => {
+            opt.classList.remove('selected');
+        });
+
+        // Show the selected detail box
+        const targetBox = document.getElementById('details-' + method);
+        if (targetBox) targetBox.classList.add('active');
+
+        // Highlight the selected payment option label
+        const targetLabel = document.querySelector('.payment-option[data-method="' + method + '"]');
+        if (targetLabel) targetLabel.classList.add('selected');
+    }
+
+    // --- 9. COPY TO CLIPBOARD ---
+    function copyToClipboard(text, successMsg) {
+        navigator.clipboard.writeText(text).then(() => {
+            // Show a temporary toast
+            const toast = document.createElement('div');
+            toast.innerHTML = '<i class="fas fa-check-circle" style="color:#27ae60;margin-right:8px;"></i>' + (successMsg || 'Copied!');
+            toast.style.cssText = `
+                position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px);
+                background: #fff; padding: 12px 24px; border-radius: 30px;
+                box-shadow: 0 8px 30px rgba(0,0,0,0.15); z-index: 99999;
+                font-weight: 600; font-size: 0.9rem; opacity: 0;
+                transition: all 0.3s ease; border: 1px solid #e2e8f0;
+                display: flex; align-items: center;
+            `;
+            document.body.appendChild(toast);
+            // Animate in
+            requestAnimationFrame(() => {
+                toast.style.opacity = '1';
+                toast.style.transform = 'translateX(-50%) translateY(0)';
+            });
+            // Animate out and remove
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(-50%) translateY(10px)';
+                setTimeout(() => toast.remove(), 350);
+            }, 2200);
+        }).catch(() => {
+            // Fallback for older browsers
+            const el = document.createElement('textarea');
+            el.value = text;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            showNotification(successMsg || 'Copied!');
+        });
+    }
+
+    // --- 10. INITIALIZE ON PAGE LOAD ---
     window.onload = function() {
         if (document.getElementById('orderItems')) {
             loadOrderSummary();
         }
         updateCartUI();
+        // Ensure COD details are visible by default
+        switchPaymentDetails('cod');
     };
 </script>
 </body>
