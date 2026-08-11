@@ -35,52 +35,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php require 'includes/navbar.php'; ?>
 
 <!-- ============================================ -->
-<!-- HERO BANNER (CONTACT US — SPLIT LAYOUT) -->
+<!-- ============================================ -->
+<!-- HERO BANNER (CONTACT US) -->
 <!-- ============================================ -->
 <section class="contact-hero">
     <canvas id="contactParticleCanvas" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none;"></canvas>
-    <div class="contact-hero-inner">
-        <!-- LEFT: TEXT CONTENT -->
-        <div class="contact-hero-content" data-aos="fade-right">
-            <div class="contact-hero-badge">
-                <i class="fas fa-envelope-open-text"></i> We're Here to Help
-            </div>
-            <h1>Contact <span>Us</span></h1>
-            <p>Have a question about our cosmetics or jewelry? Need assistance with an order? Our beauty experts are ready to help you.</p>
-            <div class="contact-hero-stats">
-                <div class="contact-stat">
-                    <i class="fas fa-clock"></i>
-                    <div>
-                        <strong>24 Hours</strong>
-                        <span>Response Time</span>
-                    </div>
-                </div>
-                <div class="contact-stat">
-                    <i class="fas fa-headset"></i>
-                    <div>
-                        <strong>Live Support</strong>
-                        <span>Mon-Sat 10AM-8PM</span>
-                    </div>
-                </div>
-                <div class="contact-stat">
-                    <i class="fas fa-shield-alt"></i>
-                    <div>
-                        <strong>Trusted</strong>
-                        <span>Secure & Private</span>
-                    </div>
-                </div>
-            </div>
-            <a href="#contact-form" class="contact-hero-btn">
-                <i class="fas fa-paper-plane"></i> Send a Message
-            </a>
-        </div>
-        <!-- RIGHT: IMAGE -->
-        <div class="contact-hero-img-wrap" data-aos="fade-left">
-            <div class="contact-hero-img-frame">
-                <img src="img/contact-hero.png" alt="Jenny's Cosmetics Contact Us" class="contact-hero-img">
-                <div class="contact-hero-img-glow"></div>
-            </div>
-        </div>
+    <div class="contact-hero-content" data-aos="fade-up">
+        <h1>Contact <span>Us</span></h1>
+        <p>Have a question about our cosmetics or jewelry? Need assistance with an order? We are here to help!</p>
     </div>
 </section>
 
