@@ -1,5 +1,5 @@
 <?php
-// admin/messages.php — Customer Inquiries & Messages v2.0
+// admin/messages.php | Customer Inquiries & Messages v2.0
 require_once 'includes/auth_check.php';
 require_once '../config/db.php';
 
@@ -32,7 +32,7 @@ $messages = $pdo->query("SELECT * FROM contact_messages ORDER BY created_at DESC
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Messages — Jenny's Admin</title>
+<title>Messages | Jenny's Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <link rel="stylesheet" href="css/admin.css">

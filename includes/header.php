@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Jenny's Cosmetics &amp; Imitation Jewelry — Premium online store for authentic makeup, lipstick, foundation, necklaces, earrings, and imitation jewelry in Pakistan. Nationwide shipping.">
+<meta name="description" content="Jenny's Cosmetics &amp; Imitation Jewelry | Premium online store for authentic makeup, lipstick, foundation, necklaces, earrings, and imitation jewelry in Pakistan. Nationwide shipping.">
 <title>Jenny's Cosmetics &amp; Imitation Jewelry</title>
 <!-- Google Fonts & Font Awesome -->
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -30,7 +30,7 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     /* --- UNIFIED STICKY HEADER WRAPPER --- */
-    /* All header layers sit INSIDE this fixed wrapper — no inner fixed positioning needed */
+    /* All header layers sit INSIDE this fixed wrapper | no inner fixed positioning needed */
     .sticky-header-wrapper {
         position: fixed;
         top: 0;
@@ -98,7 +98,7 @@
     .nav-icons a, .nav-icons i { cursor: pointer; transition: color 0.2s; color: var(--dark-black); }
     .nav-icons a:hover i, .nav-icons i:hover { color: var(--primary-gold); }
 
-    /* Cart badge — attached to the cart icon's parent div */
+    /* Cart badge | attached to the cart icon's parent div */
     .cart-icon-wrap { position: relative; display: flex; align-items: center; justify-content: center; }
     #cart-badge { position: absolute; top: -7px; right: -8px; background: var(--primary-gold); color: var(--dark-black); font-size: 0.62rem; font-weight: 700; padding: 2px 5px; border-radius: 10px; min-width: 17px; text-align: center; line-height: 1.3; display: none; }
 
@@ -327,7 +327,7 @@
     .nav-dropdown a { display: block; padding: 9px 18px; font-size: 0.82rem; color: var(--dark-black); text-transform: none; letter-spacing: 0; transition: 0.2s; }
     .nav-dropdown a:hover { background: var(--light-bg); color: var(--primary-gold); padding-left: 24px; }
 
-    /* Mobile hamburger button — hidden on desktop, shown by canonical responsive rules in style.css */
+    /* Mobile hamburger button | hidden on desktop, shown by canonical responsive rules in style.css */
     .mobile-menu-btn {
         display: none;
         background: rgba(0, 0, 0, 0.05);
@@ -407,21 +407,24 @@
     .mobile-nav-auth .mb-register { border: 1.5px solid var(--dark-black); color: var(--dark-black); }
 
     /* RESPONSIVE BREAKPOINTS */
-    /* NOTE: The canonical responsive system lives in style.css
-       These rules just handle header-specific overrides */
     @media (max-width: 992px) {
-        .header-search-bar { max-width: 300px; margin: 0 10px; }
-        .nav-bar { display: none; }
-        /* hamburger is shown by style.css canonical system */
+        .top-bar { display: none !important; }
+        .header-search-bar { display: none !important; }
+        .nav-bar { display: none !important; }
+        body { padding-top: 64px !important; }
+        .sticky-header-wrapper { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; }
+        .main-header { padding: 8px 16px !important; gap: 8px !important; width: 100% !important; max-width: 100vw !important; box-sizing: border-box !important; }
+        .logo-container { min-width: 0 !important; flex-shrink: 1 !important; }
+        .nav-icons { gap: 10px !important; }
     }
-    @media (max-width: 680px) {
-        .top-bar { display: none; }
-        .main-header { padding: 8px 14px; }
-        .header-search-bar { display: none; }
-        .logo-text { font-size: 1.1rem; }
-        .logo-img { height: 38px; }
-        .user-actions .btn-auth { font-size: 0.72rem; padding: 5px 10px; }
-        .avatar-circle { width: 30px; height: 30px; font-size: 0.85rem; }
+    @media (max-width: 576px) {
+        body { padding-top: 56px !important; }
+        .main-header { padding: 6px 12px !important; }
+        .logo-text { display: none !important; }
+        .logo-img { height: 34px !important; }
+        .nav-icons { gap: 8px !important; font-size: 1rem !important; }
+        .user-actions .btn-auth { font-size: 0.7rem !important; padding: 4px 8px !important; }
+        .avatar-circle { width: 30px !important; height: 30px !important; font-size: 0.82rem !important; }
     }
 </style>
 
@@ -468,9 +471,23 @@
 
             <div class="user-actions">
                 <?php if (isset($_SESSION['user_id']) || !empty($_SESSION['admin_logged_in'])): ?>
+                    <?php
+                    $navAvatar = null;
+                    if (!empty($_SESSION['user_id'])) {
+                        try {
+                            $avStmt = $pdo->prepare("SELECT profile_image FROM users WHERE id = ?");
+                            $avStmt->execute([$_SESSION['user_id']]);
+                            $navAvatar = $avStmt->fetchColumn();
+                        } catch (Exception $e) {}
+                    }
+                    ?>
                     <div class="avatar-container" onclick="toggleUserDropdown()" role="button" aria-haspopup="true" aria-expanded="false" tabindex="0" onkeypress="if(event.key==='Enter') toggleUserDropdown()">
                         <div class="avatar-circle">
-                            <?php echo isset($_SESSION['username']) ? strtoupper(substr($_SESSION['username'], 0, 1)) : (isset($_SESSION['admin_name']) ? strtoupper(substr($_SESSION['admin_name'], 0, 1)) : 'A'); ?>
+                            <?php if ($navAvatar && file_exists(__DIR__ . '/../img/profiles/' . $navAvatar)): ?>
+                                <img src="img/profiles/<?= htmlspecialchars($navAvatar) ?>" alt="Avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
+                            <?php else: ?>
+                                <?php echo isset($_SESSION['username']) ? strtoupper(substr($_SESSION['username'], 0, 1)) : (isset($_SESSION['admin_name']) ? strtoupper(substr($_SESSION['admin_name'], 0, 1)) : 'A'); ?>
+                            <?php endif; ?>
                         </div>
                         <i class="fas fa-chevron-down" style="font-size:0.7rem;color:var(--text-grey);"></i>
                     </div>
@@ -480,6 +497,12 @@
                             <i class="fas fa-envelope" style="margin-right:8px;"></i>
                             <?php echo isset($_SESSION['email']) ? htmlspecialchars($_SESSION['email']) : (isset($_SESSION['admin_email']) ? htmlspecialchars($_SESSION['admin_email']) : 'Admin'); ?>
                         </div>
+                        <a href="profile.php" class="dropdown-item" role="menuitem">
+                            <i class="fas fa-user-circle"></i> My Account / Profile
+                        </a>
+                        <a href="profile.php" class="dropdown-item" role="menuitem">
+                            <i class="fas fa-shopping-bag"></i> My Orders
+                        </a>
                         <?php if ((isset($_SESSION['role']) && $_SESSION['role'] === 'admin') || !empty($_SESSION['admin_logged_in'])): ?>
                         <a href="admin/index.php" class="dropdown-item" role="menuitem" style="color:var(--primary-gold);font-weight:600;">
                             <i class="fas fa-crown"></i> Admin Panel

@@ -1,5 +1,5 @@
 <?php
-// admin/index.php — Dashboard v2.0
+// admin/index.php | Dashboard v2.0
 require_once 'includes/auth_check.php';
 require_once '../config/db.php';
 
@@ -72,7 +72,7 @@ $orderTrend = $lastMonthOrders > 0 ? round((($thisMonthOrders - $lastMonthOrders
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard — Jenny's Admin</title>
+<title>Dashboard | Jenny's Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <link rel="stylesheet" href="css/admin.css">
@@ -105,9 +105,9 @@ $orderTrend = $lastMonthOrders > 0 ? round((($thisMonthOrders - $lastMonthOrders
         <div style="margin-bottom:24px;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px;">
             <div>
                 <h2 style="font-family:'Playfair Display',serif;font-size:1.7rem;color:#fff;margin-bottom:4px;">
-                    <?= $greeting ?>, <?= htmlspecialchars($_SESSION['admin_name']) ?> 👑
+                    <?= $greeting ?>, <?= htmlspecialchars($_SESSION['admin_name']) ?> <i class="fas fa-crown"></i>
                 </h2>
-                <p style="color:#666;font-size:0.875rem;">Here's what's happening with Jenny's store today — <?= date('l, F j, Y') ?></p>
+                <p style="color:#666;font-size:0.875rem;">Here's what's happening with Jenny's store today | <?= date('l, F j, Y') ?></p>
             </div>
             <div style="display:flex;gap:8px;">
                 <a href="products.php?action=add" class="btn-gold" onclick="event.preventDefault();window.location='products.php'"><i class="fas fa-plus"></i> Add Product</a>
@@ -326,7 +326,7 @@ $orderTrend = $lastMonthOrders > 0 ? round((($thisMonthOrders - $lastMonthOrders
                                     </div>
                                 </div>
                             </td>
-                            <td style="font-size:0.8rem;color:#888;"><?= htmlspecialchars($cu['city'] ?? '—') ?></td>
+                            <td style="font-size:0.8rem;color:#888;"><?= htmlspecialchars($cu['city'] ?? ' | ') ?></td>
                             <td><span class="badge-status badge-<?= $cu['status'] ?? 'active' ?>"><?= ucfirst($cu['status'] ?? 'active') ?></span></td>
                         </tr>
                         <?php endforeach; ?>

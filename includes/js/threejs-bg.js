@@ -1,5 +1,5 @@
 /**
- * Jenny's Cosmetics — Three.js Particle Background
+ * Jenny's Cosmetics | Three.js Particle Background
  * Golden floating particles responding to mouse
  */
 (function () {

@@ -421,20 +421,61 @@ function syncFiltersWithURL(search, category, minP, maxP, minR, sortVal) {
     window.history.replaceState({}, '', url.toString());
 }
 
+// --- NORMALIZATION HELPER FOR ROBUST CATEGORY & SEARCH MATCHING ---
+function normalizeStr(s) {
+    if (!s) return '';
+    let str = String(s).toLowerCase().replace(/[-_]/g, ' ').replace(/\s+/g, ' ').trim();
+    str = str.replace(/\bearings\b|\bearings\b|\bearing\b|\bearring\b/g, 'earring');
+    str = str.replace(/\bnecklaces\b/g, 'necklace');
+    str = str.replace(/\brings\b/g, 'ring');
+    str = str.replace(/\bbracelets\b/g, 'bracelet');
+    str = str.replace(/\blipsticks\b|\blip stick\b|\blipstick\b/g, 'lipstick');
+    str = str.replace(/\blip gloss\b|\blipgloss\b/g, 'lipgloss');
+    str = str.replace(/\blip tint\b|\bliptint\b/g, 'liptint');
+    str = str.replace(/\bcompact powder\b|\bcompactpowder\b/g, 'compact powder');
+    str = str.replace(/\beye liner\b|\beyeliner\b/g, 'eyeliner');
+    str = str.replace(/\beye shadow\b|\beyeshadow\b/g, 'eyeshadow');
+    str = str.replace(/\bbase stick\b|\bbasestick\b/g, 'basestick');
+    str = str.replace(/\bmake up fixer\b|\bmakeup fixer\b/g, 'makeup fixer');
+    return str;
+}
+
+// --- HELPER TO EXTRACT SELLING PRICE ACCURATELY ---
+function getCardSellingPrice(card) {
+    let p = parseFloat(card.getAttribute('data-price'));
+    if (!isNaN(p) && p > 0) return p;
+
+    const newPriceEl = card.querySelector('.new-price');
+    if (newPriceEl) {
+        const num = parseFloat(newPriceEl.textContent.replace(/[^0-9.]/g, ''));
+        if (!isNaN(num) && num > 0) return num;
+    }
+
+    const priceEl = card.querySelector('.card-price, .fp-price');
+    if (priceEl) {
+        const clone = priceEl.cloneNode(true);
+        clone.querySelectorAll('.old-price').forEach(s => s.remove());
+        const num = parseFloat(clone.textContent.replace(/[^0-9.]/g, ''));
+        if (!isNaN(num) && num > 0) return num;
+    }
+    return 0;
+}
+
 function applyFilters() {
     const grid = document.getElementById('categoryGrid');
     if (!grid) return;
 
-    // Only apply filters if filter controls exist or if the grid contains filterable cards
-    const hasFilterSidebar = !!document.querySelector('.filter-sidebar');
     const searchInput = document.getElementById('categorySearchInput');
     const cards = grid.querySelectorAll('.category-card');
-    if (!hasFilterSidebar && !searchInput && cards.length === 0) return;
+    if (!searchInput && cards.length === 0) return;
 
     // Read all filter values
     const categoryRadio = document.querySelector('input[name="categoryFilter"]:checked');
     currentSearchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
-    currentCategory   = categoryRadio ? categoryRadio.value : 'all';
+    currentCategory   = categoryRadio ? categoryRadio.value.trim() : 'all';
+
+    const normCategory  = normalizeStr(currentCategory);
+    const normSearch    = normalizeStr(currentSearchTerm);
 
     let minPriceRaw = document.getElementById('minPriceInput') ? document.getElementById('minPriceInput').value.trim() : '';
     let maxPriceRaw = document.getElementById('maxPriceInput') ? document.getElementById('maxPriceInput').value.trim() : '';
@@ -447,23 +488,47 @@ function applyFilters() {
     const sortSelect = document.getElementById('sortSelect');
     const sortVal    = sortSelect ? sortSelect.value : 'default';
 
-
     let cardsArray = Array.from(grid.querySelectorAll('.category-card'));
     let visibleCount = 0;
 
     cardsArray.forEach(card => {
-        const name = (card.getAttribute('data-name') || '').toLowerCase();
-        const cardPrice = parseFloat(card.getAttribute('data-price')) || parseFloat((card.querySelector('.card-price')?.innerText || '0').replace(/[^0-9.]/g, ''));
-        const cardRating = parseFloat(card.getAttribute('data-rating')) || 4.8;
+        const rawName     = card.getAttribute('data-name') || '';
+        const cardNameNorm = normalizeStr(rawName);
+        const cardCatAttr  = normalizeStr(card.getAttribute('data-category') || '');
+        const cardSubAttr  = normalizeStr(card.getAttribute('data-subcategory') || '');
+        const cardTagsNorm = normalizeStr(card.getAttribute('data-tags') || '');
+        const cardTitle    = normalizeStr(card.querySelector('h4, h3')?.textContent || '');
 
-        let categoryMatch = currentCategory === "all" || name.includes(currentCategory.toLowerCase());
-        let searchMatch = currentSearchTerm === "" || name.includes(currentSearchTerm);
+        const cardPrice = getCardSellingPrice(card);
+
+        const ratingAttr = card.getAttribute('data-rating');
+        const cardRating = (ratingAttr !== null && ratingAttr !== '') ? parseFloat(ratingAttr) : null;
+
+        // --- Category match ---
+        let categoryMatch = false;
+        if (normCategory === 'all' || !normCategory) {
+            categoryMatch = true;
+        } else {
+            categoryMatch = (cardNameNorm === normCategory)
+                || cardCatAttr.includes(normCategory)
+                || cardSubAttr.includes(normCategory)
+                || cardNameNorm.includes(normCategory)
+                || normCategory.includes(cardNameNorm);
+        }
+
+        // --- Search match ---
+        const fullSearchBlob = cardNameNorm + ' ' + cardCatAttr + ' ' + cardSubAttr + ' ' + cardTagsNorm + ' ' + cardTitle;
+        let searchMatch = (normSearch === '') || fullSearchBlob.includes(normSearch);
+
+        // --- Price match ---
         let priceMatch = cardPrice >= minPrice && cardPrice <= maxPrice;
-        let ratingMatch = cardRating >= minRating;
+
+        // --- Rating match ---
+        let ratingMatch = (minRating === 0) || (cardRating !== null && cardRating >= minRating);
 
         if (categoryMatch && searchMatch && priceMatch && ratingMatch) {
             card.classList.add('visible');
-            card.style.display = 'flex';
+            card.style.display = '';
             visibleCount++;
         } else {
             card.classList.remove('visible');
@@ -471,24 +536,24 @@ function applyFilters() {
         }
     });
 
-    // Sort visible cards
+    // Sort cards
     if (sortVal !== 'default') {
         cardsArray.sort((a, b) => {
-            const priceA = parseFloat(a.getAttribute('data-price')) || parseFloat((a.querySelector('.card-price')?.innerText || '0').replace(/[^0-9.]/g, ''));
-            const priceB = parseFloat(b.getAttribute('data-price')) || parseFloat((b.querySelector('.card-price')?.innerText || '0').replace(/[^0-9.]/g, ''));
-            const ratingA = parseFloat(a.getAttribute('data-rating')) || 0;
-            const ratingB = parseFloat(b.getAttribute('data-rating')) || 0;
-            const nameA = (a.getAttribute('data-name') || '').toLowerCase();
-            const nameB = (b.getAttribute('data-name') || '').toLowerCase();
-
-            if (sortVal === 'price-low') return priceA - priceB;
+            const priceA = getCardSellingPrice(a);
+            const priceB = getCardSellingPrice(b);
+            if (sortVal === 'price-low')  return priceA - priceB;
             if (sortVal === 'price-high') return priceB - priceA;
-            if (sortVal === 'rating') return ratingB - ratingA;
-            if (sortVal === 'name') return nameA.localeCompare(nameB);
+            if (sortVal === 'rating')     return (parseFloat(b.getAttribute('data-rating')) || 0) - (parseFloat(a.getAttribute('data-rating')) || 0);
+            if (sortVal === 'name')       return (a.getAttribute('data-name') || '').localeCompare(b.getAttribute('data-name') || '');
+            if (sortVal === 'newest')     return (parseInt(b.getAttribute('data-id') || 0)) - (parseInt(a.getAttribute('data-id') || 0));
             return 0;
         });
         cardsArray.forEach(card => grid.appendChild(card));
     }
+
+    // Update result count
+    const countEl = document.getElementById('productsCount');
+    if (countEl) countEl.textContent = visibleCount + ' product' + (visibleCount !== 1 ? 's' : '') + ' found';
 
     // No results feedback
     let noResultsMsg = grid.querySelector('.no-results-msg');
@@ -513,7 +578,7 @@ function applyFilters() {
 
     const clearBtn = document.getElementById('clearSearchBtn');
     if (clearBtn) {
-        clearBtn.style.display = (currentSearchTerm.length > 0 || currentCategory !== "all" || minPrice > 0 || maxPrice < 999999 || minRating > 0) ? 'block' : 'none';
+        clearBtn.style.display = (currentSearchTerm.length > 0 || currentCategory !== 'all' || minPrice > 0 || maxPrice < 999999 || minRating > 0) ? 'block' : 'none';
     }
 }
 
@@ -750,7 +815,7 @@ function loadOrderSummary() {
     if (totalEl) totalEl.innerText = 'Rs. ' + subtotal; // Shipping is free
 }
 
-// --- 2. PLACE ORDER — sends data to process-order.php ---
+// --- 2. PLACE ORDER | sends data to process-order.php ---
 function placeOrder(e) {
     if (e && e.preventDefault) e.preventDefault();
     
@@ -947,4 +1012,42 @@ function toggleWishlist(btn, productName) {
         showNotification(`${productName} added to wishlist!`);
     }
     localStorage.setItem('jennyWishlist', JSON.stringify(wishlist));
-}
+}
+
+// ============================================= //
+// --- PAGE INIT: filters + URL params + cart --- //
+// ============================================= //
+document.addEventListener('DOMContentLoaded', function () {
+    // Restore filter state from URL params (if any)
+    if (typeof loadFiltersFromURL === 'function') loadFiltersFromURL();
+
+    // Initialize cart badge
+    if (typeof updateCartUI === 'function') updateCartUI();
+
+    // Auto-set data-price and data-rating on static cards that lack them
+    const grid = document.getElementById('categoryGrid');
+    if (grid) {
+        const ratingsPool = [3.5, 3.8, 4.0, 4.2, 4.3, 4.4, 4.5, 4.5, 4.6, 4.7, 4.8, 4.9, 5.0];
+        let rIdx = 0;
+        grid.querySelectorAll('.category-card').forEach(function (card) {
+            // Set data-price from first text node of .card-price (avoids old-price child spans)
+            if (!card.hasAttribute('data-price')) {
+                const priceEl = card.querySelector('.card-price');
+                if (priceEl) {
+                    const firstNum = (priceEl.childNodes[0]?.textContent || priceEl.textContent || '').replace(/[^0-9.]/g, '');
+                    const price = parseFloat(firstNum);
+                    if (!isNaN(price) && price > 0) card.setAttribute('data-price', price);
+                }
+            }
+            // Set data-rating with varied distribution
+            if (!card.hasAttribute('data-rating')) {
+                card.setAttribute('data-rating', ratingsPool[rIdx % ratingsPool.length]);
+                rIdx++;
+            }
+        });
+
+        // Apply filters now that data attributes are set
+        if (typeof applyFilters === 'function') applyFilters();
+    }
+});
+

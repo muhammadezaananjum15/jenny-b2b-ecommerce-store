@@ -3,6 +3,15 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 require_once 'config/db.php';
+
+// Auto-sync high-res AI generated hero images if available in artifacts
+$aiImg1 = 'C:/Users/HP/.gemini/antigravity-ide/brain/e6a7993b-3db8-46ad-a00c-5699c7072618/hero_luxury_beauty_banner_1786384333201.png';
+$aiImg2 = 'C:/Users/HP/.gemini/antigravity-ide/brain/e6a7993b-3db8-46ad-a00c-5699c7072618/hero_luxury_cosmetics_banner_1786384352031.png';
+$aiImg3 = 'C:/Users/HP/.gemini/antigravity-ide/brain/e6a7993b-3db8-46ad-a00c-5699c7072618/hero_luxury_jewelry_banner_1786384366469.png';
+if (file_exists($aiImg1)) { @copy($aiImg1, __DIR__ . '/img/hero-ai-beauty.png'); }
+if (file_exists($aiImg2)) { @copy($aiImg2, __DIR__ . '/img/hero-ai-cosmetics.png'); }
+if (file_exists($aiImg3)) { @copy($aiImg3, __DIR__ . '/img/hero-ai-jewelry.png'); }
+
 require 'includes/header.php';
 ?>
 
@@ -50,18 +59,48 @@ if (isset($pdo)) {
             </div>
             <?php endforeach; ?>
         <?php else: ?>
-            <!-- Fallback Static Slide 1 -->
+            <!-- Fallback Slide 1: Beauty -->
             <div class="carousel-slide active" data-slide="0">
                 <div class="slide-bg" style="background-image: url('img/hero-ai-beauty.png');"></div>
                 <div class="slide-overlay"></div>
                 <div class="slide-content">
-                    <div class="slide-badge" data-anim="badge">✨ Premium Collection</div>
+                    <div class="slide-badge" data-anim="badge"><i class="fas fa-sparkles"></i> Premium Collection</div>
                     <h3 data-anim="sub">Elevate Your</h3>
-                    <h1 data-anim="title">Beauty & <span>Shine</span></h1>
-                    <p data-anim="desc">Premium cosmetics &amp; imitation jewelry that brings out the best in you. Quality crafted for the modern woman.</p>
+                    <h1 data-anim="title">Beauty &amp; <span>Shine</span></h1>
+                    <p data-anim="desc">Premium cosmetics &amp; imitation jewelry crafted for the modern woman. Discover high-pigment formulas &amp; royal elegance.</p>
                     <div class="slide-buttons" data-anim="btns">
                         <button class="btn-primary" onclick="location.href='products.php'">Shop Now</button>
                         <button class="btn-outline" onclick="location.href='cosmetics.php'">Explore</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Fallback Slide 2: Cosmetics -->
+            <div class="carousel-slide" data-slide="1">
+                <div class="slide-bg" style="background-image: url('img/hero-ai-cosmetics.png');"></div>
+                <div class="slide-overlay"></div>
+                <div class="slide-content">
+                    <div class="slide-badge"><i class="fas fa-magic"></i> Ultra Cosmetics</div>
+                    <h3>Luxury Makeup</h3>
+                    <h1>Flawless <span>Glamour</span></h1>
+                    <p>Long-lasting matte lipsticks, silk foundations, and highlighters for a luminous complexion.</p>
+                    <div class="slide-buttons">
+                        <button class="btn-primary" onclick="location.href='cosmetics.php'">Shop Cosmetics</button>
+                        <button class="btn-outline" onclick="location.href='offers.php'">View Offers</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Fallback Slide 3: Jewelry -->
+            <div class="carousel-slide" data-slide="2">
+                <div class="slide-bg" style="background-image: url('img/hero-ai-jewelry.png');"></div>
+                <div class="slide-overlay"></div>
+                <div class="slide-content">
+                    <div class="slide-badge"><i class="fas fa-gem"></i> Imitation Jewelry</div>
+                    <h3>Royal Craftsmanship</h3>
+                    <h1>Shine Like <span>Gold</span></h1>
+                    <p>Exquisite bridal sets, gold-plated necklaces, rings, and earrings designed for royalty.</p>
+                    <div class="slide-buttons">
+                        <button class="btn-primary" onclick="location.href='imitation-jewelry.php'">Shop Jewelry</button>
+                        <button class="btn-outline" onclick="location.href='best-sellers.php'">Bestsellers</button>
                     </div>
                 </div>
             </div>
@@ -79,15 +118,12 @@ if (isset($pdo)) {
     <!-- Dots -->
     <div class="carousel-dots" id="carouselDots">
         <?php 
-        $dotCount = !empty($dbSlides) ? count($dbSlides) : 1;
+        $dotCount = !empty($dbSlides) ? count($dbSlides) : 3;
         for ($d = 0; $d < $dotCount; $d++): 
         ?>
         <button class="dot <?= $d === 0 ? 'active' : '' ?>" data-dot="<?= $d ?>"></button>
         <?php endfor; ?>
     </div>
-
-    <!-- Progress Bar -->
-    <div class="carousel-progress"><div class="carousel-progress-bar" id="progressBar"></div></div>
 </section>
 
 <!-- ============================================================ -->
@@ -222,7 +258,7 @@ if (isset($pdo)) {
     <div class="story-content-col" data-aos="fade-left">
         <div class="story-tag">Our Story</div>
         <h2>Crafted with <span>Passion</span>,<br>Built on <span>Trust</span></h2>
-        <p class="story-lead">Jenny's Cosmetics &amp; Jewelry was born from a simple dream — to make every woman feel beautiful without breaking the bank.</p>
+        <p class="story-lead">Jenny's Cosmetics &amp; Jewelry was born from a simple dream | to make every woman feel beautiful without breaking the bank.</p>
         <p>We believe that premium quality doesn't have to come with a premium price tag. Our carefully curated collection of cosmetics and imitation jewelry is sourced from the finest suppliers to bring you products that look, feel, and perform like luxury.</p>
         <div class="story-values">
             <div class="value-item"><i class="fas fa-leaf"></i><span>Cruelty Free</span></div>
@@ -691,45 +727,73 @@ if (isset($pdo)) {
     const slides   = document.querySelectorAll('.carousel-slide');
     const dots     = document.querySelectorAll('.dot');
     const progress = document.getElementById('progressBar');
-    const total    = slides.length; // FIX: was hardcoded 5
+    const total    = slides.length;
 
-    if (!slides || slides.length === 0) return;
+    if (!slides || total === 0) return;
+
+    // Hide navigation when only 1 slide | nothing to cycle through
+    if (total <= 1) {
+        const nextBtn = document.getElementById('carouselNext');
+        const prevBtn = document.getElementById('carouselPrev');
+        const dotsEl  = document.getElementById('carouselDots');
+        if (nextBtn) nextBtn.style.display = 'none';
+        if (prevBtn) prevBtn.style.display = 'none';
+        if (dotsEl)  dotsEl.style.display  = 'none';
+
+        // Still run the entry animation for the single slide
+        if (slides[0] && slides[0].querySelector('.slide-content') && typeof gsap !== 'undefined') {
+            gsap.fromTo(slides[0].querySelector('.slide-content'),
+                { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, delay: 0.3, ease: 'power2.out' });
+        }
+        resetProgress();
+        return; // No cycling needed
+    }
 
     function goTo(n, dir) {
         if (isAnimating || n === current) return;
         isAnimating = true;
 
+        // Safety: release lock after 1.2s in case GSAP onComplete never fires
+        const animLock = setTimeout(() => { isAnimating = false; }, 1200);
+
         const prevSlide = slides[current];
         const nextSlide = slides[n];
         const direction = dir || (n > current ? 1 : -1);
 
-        // Animate OUT current
-        gsap.to(prevSlide.querySelector('.slide-content'), {
-            x: direction * -60, opacity: 0, duration: 0.4, ease: 'power2.in',
-            onComplete: () => { prevSlide.classList.remove('active'); }
-        });
-        gsap.to(prevSlide.querySelector('.slide-bg'), {
-            scale: 1.05, duration: 0.8, ease: 'power2.inOut'
-        });
-
-        // Animate IN next
-        nextSlide.classList.add('active');
-        gsap.fromTo(nextSlide.querySelector('.slide-bg'),
-            { scale: 1.08 }, { scale: 1, duration: 0.9, ease: 'power2.out' });
-        gsap.fromTo(nextSlide.querySelector('.slide-content'),
-            { x: direction * 80, opacity: 0 },
-            { x: 0, opacity: 1, duration: 0.6, delay: 0.15, ease: 'power2.out',
-              onComplete: () => { isAnimating = false; }
-            }
-        );
-
-        // Stagger content elements
-        const els = nextSlide.querySelectorAll('[data-anim]');
-        els.forEach((el, i) => {
-            gsap.fromTo(el, { y: 30, opacity: 0 }, {
-                y: 0, opacity: 1, duration: 0.5, delay: 0.2 + i * 0.1, ease: 'power2.out'
+        if (typeof gsap !== 'undefined') {
+            // Animate OUT current
+            gsap.to(prevSlide.querySelector('.slide-content'), {
+                x: direction * -60, opacity: 0, duration: 0.4, ease: 'power2.in',
+                onComplete: () => { prevSlide.classList.remove('active'); }
             });
-        });
+            gsap.to(prevSlide.querySelector('.slide-bg'), {
+                scale: 1.05, duration: 0.8, ease: 'power2.inOut'
+            });
+
+            // Animate IN next
+            nextSlide.classList.add('active');
+            gsap.fromTo(nextSlide.querySelector('.slide-bg'),
+                { scale: 1.08 }, { scale: 1, duration: 0.9, ease: 'power2.out' });
+            gsap.fromTo(nextSlide.querySelector('.slide-content'),
+                { x: direction * 80, opacity: 0 },
+                { x: 0, opacity: 1, duration: 0.6, delay: 0.15, ease: 'power2.out',
+                  onComplete: () => { clearTimeout(animLock); isAnimating = false; }
+                }
+            );
+
+            // Stagger content elements
+            nextSlide.querySelectorAll('[data-anim]').forEach((el, i) => {
+                gsap.fromTo(el, { y: 30, opacity: 0 }, {
+                    y: 0, opacity: 1, duration: 0.5, delay: 0.2 + i * 0.1, ease: 'power2.out'
+                });
+            });
+        } else {
+            // No GSAP fallback
+            prevSlide.classList.remove('active');
+            nextSlide.classList.add('active');
+            clearTimeout(animLock);
+            isAnimating = false;
+        }
 
         // Update dots
         if (dots[current]) dots[current].classList.remove('active');
@@ -764,19 +828,26 @@ if (isset($pdo)) {
     if (prevBtn) prevBtn.addEventListener('click', () => { prev(); startAuto(); });
     dots.forEach(d => d.addEventListener('click', () => { goTo(parseInt(d.dataset.dot)); startAuto(); }));
 
-    // Touch/swipe
-    let touchX = 0;
-    const wrapper = document.getElementById('carouselWrapper');
-    if (wrapper) {
-        wrapper.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; }, { passive: true });
-        wrapper.addEventListener('touchend', e => {
-            const dx = e.changedTouches[0].clientX - touchX;
-            if (Math.abs(dx) > 50) { dx < 0 ? next() : prev(); startAuto(); }
-        });
+    // Touch swipe support for hero carousel
+    const heroElem = document.getElementById('heroCarousel');
+    if (heroElem) {
+        let touchStartX = 0;
+        let touchEndX = 0;
+        heroElem.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+        }, { passive: true });
+        heroElem.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].clientX;
+            const diff = touchStartX - touchEndX;
+            if (Math.abs(diff) > 40) {
+                if (diff > 0) { next(); } else { prev(); }
+                startAuto();
+            }
+        }, { passive: true });
     }
 
     // Initial animate in
-    if (slides[0] && slides[0].querySelector('.slide-content')) {
+    if (slides[0] && slides[0].querySelector('.slide-content') && typeof gsap !== 'undefined') {
         gsap.fromTo(slides[0].querySelector('.slide-content'),
             { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, delay: 0.3, ease: 'power2.out' });
     }
@@ -808,42 +879,105 @@ if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
 }
 
 // ============================================================
-// TESTIMONIAL SLIDER
+// TESTIMONIAL SLIDER WITH TOUCH SWIPE & MOBILE RESPONSIVENESS
 // ============================================================
 (function() {
     const track = document.getElementById('testiTrack');
     if (!track) return;
     const cards = track.querySelectorAll('.testimonial-card');
     const dotsEl = document.getElementById('testiDots');
-    const perView = window.innerWidth < 600 ? 1 : window.innerWidth < 900 ? 2 : 3;
+    let perView = window.innerWidth <= 768 ? 1 : window.innerWidth <= 1024 ? 2 : 3;
     let curr = 0;
+    let autoTimer = null;
 
-    if (cards.length <= perView) return;
+    function getPerView() {
+        return window.innerWidth <= 768 ? 1 : window.innerWidth <= 1024 ? 2 : 3;
+    }
 
-    // Create dots
-    const totalDots = Math.ceil(cards.length / perView);
-    if (dotsEl) {
-        dotsEl.innerHTML = '';
-        for (let i = 0; i < totalDots; i++) {
-            const d = document.createElement('button');
-            d.className = 'testi-dot' + (i === 0 ? ' active' : '');
-            d.onclick = () => slideTo(i);
-            dotsEl.appendChild(d);
+    function buildDots() {
+        perView = getPerView();
+        const totalDots = Math.ceil(cards.length / perView);
+        if (dotsEl) {
+            dotsEl.innerHTML = '';
+            if (cards.length > perView) {
+                for (let i = 0; i < totalDots; i++) {
+                    const d = document.createElement('button');
+                    d.className = 'testi-dot' + (i === curr ? ' active' : '');
+                    d.setAttribute('aria-label', `Slide ${i + 1}`);
+                    d.onclick = () => slideTo(i);
+                    dotsEl.appendChild(d);
+                }
+            }
         }
     }
 
     function slideTo(n) {
-        curr = n;
-        const offset = -n * (100 / perView) * perView;
+        perView = getPerView();
+        const totalDots = Math.ceil(cards.length / perView);
+        if (totalDots === 0) return;
+        curr = (n + totalDots) % totalDots;
+
+        const offset = -curr * (100 / perView) * perView;
         if (typeof gsap !== 'undefined') {
-            gsap.to(track, { x: offset + '%', duration: 0.6, ease: 'power2.out' });
+            gsap.to(track, { x: offset + '%', duration: 0.5, ease: 'power2.out' });
         } else {
             track.style.transform = `translateX(${offset}%)`;
         }
-        document.querySelectorAll('.testi-dot').forEach((d, i) => d.classList.toggle('active', i === n));
+        document.querySelectorAll('.testi-dot').forEach((d, i) => d.classList.toggle('active', i === curr));
     }
 
-    setInterval(() => { slideTo((curr + 1) % totalDots); }, 4000);
+    function startAuto() {
+        stopAuto();
+        autoTimer = setInterval(() => {
+            const totalDots = Math.ceil(cards.length / getPerView());
+            if (totalDots > 1) {
+                slideTo((curr + 1) % totalDots);
+            }
+        }, 5500);
+    }
+
+    function stopAuto() {
+        if (autoTimer) clearInterval(autoTimer);
+    }
+
+    // TOUCH & SWIPE SUPPORT FOR MOBILE
+    let startX = 0;
+    let currentX = 0;
+    let isDragging = false;
+
+    track.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX;
+        isDragging = true;
+        stopAuto();
+    }, { passive: true });
+
+    track.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        currentX = e.touches[0].clientX;
+    }, { passive: true });
+
+    track.addEventListener('touchend', () => {
+        if (!isDragging) return;
+        isDragging = false;
+        const diffX = startX - currentX;
+        const threshold = 40;
+        if (Math.abs(diffX) > threshold) {
+            if (diffX > 0) {
+                slideTo(curr + 1);
+            } else {
+                slideTo(curr - 1);
+            }
+        }
+        startAuto();
+    });
+
+    window.addEventListener('resize', () => {
+        buildDots();
+        slideTo(curr);
+    });
+
+    buildDots();
+    startAuto();
 })();
 
 // ============================================================

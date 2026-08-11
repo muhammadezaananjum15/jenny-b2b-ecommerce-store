@@ -1,11 +1,11 @@
 <?php
 /**
- * admin-setup.php — One-time Admin Setup & Password Reset
+ * admin-setup.php | One-time Admin Setup & Password Reset
  * DELETE THIS FILE after you've logged in successfully!
  * Access: http://localhost/jenny/admin-setup.php
  */
 
-// Simple security token — change this if you want
+// Simple security token | change this if you want
 define('SETUP_TOKEN', 'jenny_setup_2024');
 
 require_once 'config/db.php';
@@ -20,10 +20,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? 'admin123';
 
     if ($token !== SETUP_TOKEN) {
-        $message = '❌ Invalid security token.';
+        $message = '<i class="fas fa-times-circle"></i> Invalid security token.';
         $msgType = 'error';
     } elseif (strlen($password) < 6) {
-        $message = '❌ Password must be at least 6 characters.';
+        $message = '<i class="fas fa-times-circle"></i> Password must be at least 6 characters.';
         $msgType = 'error';
     } else {
         $hash = password_hash($password, PASSWORD_BCRYPT);
@@ -37,16 +37,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Update existing admin
                 $pdo->prepare("UPDATE users SET password = ?, username = ?, role = 'admin', is_admin = 1 WHERE email = ?")
                     ->execute([$hash, $username, $email]);
-                $message = "✅ Admin password updated! Email: <strong>$email</strong> | Password: <strong>$password</strong>";
+                $message = "<i class="fas fa-check-circle"></i> Admin password updated! Email: <strong>$email</strong> | Password: <strong>$password</strong>";
             } else {
                 // Create new admin
                 $pdo->prepare("INSERT INTO users (username, email, password, role, is_admin) VALUES (?, ?, ?, 'admin', 1)")
                     ->execute([$username, $email, $hash]);
-                $message = "✅ Admin created! Email: <strong>$email</strong> | Password: <strong>$password</strong>";
+                $message = "<i class="fas fa-check-circle"></i> Admin created! Email: <strong>$email</strong> | Password: <strong>$password</strong>";
             }
             $msgType = 'success';
         } catch (PDOException $e) {
-            $message = '❌ Database error: ' . $e->getMessage();
+            $message = '<i class="fas fa-times-circle"></i> Database error: ' . $e->getMessage();
             $msgType = 'error';
         }
     }
@@ -64,12 +64,12 @@ try {
                 try { $pdo->exec($stmt); } catch (PDOException $e) { /* ignore */ }
             }
         }
-        $dbStatus = '✅ Database tables verified/created';
+        $dbStatus = '<i class="fas fa-check-circle"></i> Database tables verified/created';
     } else {
-        $dbStatus = '⚠️ setup.sql not found';
+        $dbStatus = '<i class="fas fa-exclamation-triangle"></i> setup.sql not found';
     }
 } catch (Exception $e) {
-    $dbStatus = '❌ DB Error: ' . $e->getMessage();
+    $dbStatus = '<i class="fas fa-times-circle"></i> DB Error: ' . $e->getMessage();
 }
 
 // Check current admin users
@@ -83,7 +83,7 @@ try {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Setup — Jenny's Cosmetics</title>
+<title>Admin Setup | Jenny's Cosmetics</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -189,8 +189,8 @@ td { color: #ccc; padding: 8px 12px; border-bottom: 1px solid #222; }
 <body>
 <div class="setup-card">
     <div class="logo">
-        <h1>⚙️ Admin Setup</h1>
-        <p>Jenny's Cosmetics — One-time setup utility</p>
+        <h1><i class="fas fa-cogs"></i> Admin Setup</h1>
+        <p>Jenny's Cosmetics | One-time setup utility</p>
     </div>
 
     <div class="status-box">
@@ -201,7 +201,7 @@ td { color: #ccc; padding: 8px 12px; border-bottom: 1px solid #222; }
     <div class="alert <?= $msgType ?>">
         <?= $message ?>
         <?php if ($msgType === 'success'): ?>
-        <br><br>👉 <a href="admin/login.php" style="color:inherit;font-weight:700;">Go to Admin Login →</a>
+        <br><br><i class="fas fa-arrow-right"></i> <a href="admin/login.php" style="color:inherit;font-weight:700;">Go to Admin Login</a>
         <?php endif; ?>
     </div>
     <?php endif; ?>
@@ -223,7 +223,7 @@ td { color: #ccc; padding: 8px 12px; border-bottom: 1px solid #222; }
             <label>Admin Password (min 6 chars)</label>
             <input type="text" name="password" value="admin123" required>
         </div>
-        <button type="submit" class="btn-setup">🔐 Create / Reset Admin</button>
+        <button type="submit" class="btn-setup"><i class="fas fa-shield-alt"></i> Create / Reset Admin</button>
     </form>
 
     <?php if (!empty($admins)): ?>
@@ -248,7 +248,7 @@ td { color: #ccc; padding: 8px 12px; border-bottom: 1px solid #222; }
     </div>
 
     <div class="warning">
-        ⚠️ Delete this file after setup! <code>admin-setup.php</code>
+        <i class="fas fa-exclamation-triangle"></i> Delete this file after setup! <code>admin-setup.php</code>
     </div>
 </div>
 </body>

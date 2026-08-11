@@ -1,5 +1,5 @@
 <?php
-// admin/users.php — Full CRUD Customer Management v2.0
+// admin/users.php | Full CRUD Customer Management v2.0
 require_once 'includes/auth_check.php';
 require_once '../config/db.php';
 
@@ -20,6 +20,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $role     = trim($_POST['role'] ?? 'customer');
         $is_admin = $role === 'admin' ? 1 : 0;
 
+        $account_type = trim($_POST['account_type'] ?? 'retail');
+        $company_name = trim($_POST['company_name'] ?? '');
+        $bus_email    = trim($_POST['business_email'] ?? '');
+        $tax_id       = trim($_POST['tax_id'] ?? '');
+        $birthdate    = trim($_POST['birthdate'] ?? '');
+
         // Profile image upload
         $profileImg = trim($_POST['existing_img'] ?? '');
         if (!empty($_FILES['profile_image']['name'])) {
@@ -35,8 +41,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         try {
-            $pdo->prepare("UPDATE users SET full_name=?, email=?, phone=?, city=?, address=?, status=?, role=?, is_admin=?, profile_image=? WHERE id=?")
-                ->execute([$fullName, $email, $phone, $city, $address, $status, $role, $is_admin, $profileImg, $id]);
+            $pdo->prepare("UPDATE users SET full_name=?, email=?, phone=?, city=?, address=?, status=?, role=?, is_admin=?, profile_image=?, account_type=?, company_name=?, business_email=?, tax_id=?, birthdate=? WHERE id=?")
+                ->execute([$fullName, $email, $phone, $city, $address, $status, $role, $is_admin, $profileImg, $account_type, $company_name, $bus_email, $tax_id, !empty($birthdate)?$birthdate:null, $id]);
             $msg = 'User updated successfully.'; $msgType = 'success';
         } catch (PDOException $e) { $msg = 'Error: ' . $e->getMessage(); $msgType = 'error'; }
 
@@ -97,7 +103,7 @@ if (isset($_GET['edit_id'])) {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Customers — Jenny's Admin</title>
+<title>Customers | Jenny's Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <link rel="stylesheet" href="css/admin.css">
@@ -129,9 +135,10 @@ if (isset($_GET['edit_id'])) {
                             <i class="fas fa-search"></i>
                             <input type="text" name="search" placeholder="Search users..." value="<?= htmlspecialchars($search) ?>">
                         </div>
-                        <select name="role" class="form-control" style="width:120px;" onchange="this.form.submit()">
+                        <select name="role" class="form-control" style="width:130px;" onchange="this.form.submit()">
                             <option value="">All Roles</option>
                             <option value="customer" <?= $roleFilter==='customer'?'selected':'' ?>>Customer</option>
+                            <option value="retailer" <?= $roleFilter==='retailer'?'selected':'' ?>>Retailer / B2B</option>
                             <option value="admin" <?= $roleFilter==='admin'?'selected':'' ?>>Admin</option>
                         </select>
                         <select name="status" class="form-control" style="width:120px;" onchange="this.form.submit()">
@@ -152,8 +159,8 @@ if (isset($_GET['edit_id'])) {
                 <thead><tr>
                     <th>User</th>
                     <th>Contact</th>
-                    <th>City</th>
-                    <th>Role</th>
+                    <th>City / Company</th>
+                    <th>Account Role</th>
                     <th>Orders</th>
                     <th>Status</th>
                     <th>Joined</th>
@@ -164,7 +171,7 @@ if (isset($_GET['edit_id'])) {
                     <tr>
                         <td>
                             <div style="display:flex;align-items:center;gap:10px;">
-                                <?php if ($u['profile_image'] && file_exists('../img/profiles/'.$u['profile_image'])): ?>
+                                <?php if (!empty($u['profile_image']) && file_exists('../img/profiles/'.$u['profile_image'])): ?>
                                 <img src="../img/profiles/<?= htmlspecialchars($u['profile_image']) ?>" class="user-avatar-md" alt="">
                                 <?php else: ?>
                                 <div class="user-initials"><?= strtoupper(substr($u['username'],0,1)) ?></div>
@@ -177,10 +184,23 @@ if (isset($_GET['edit_id'])) {
                         </td>
                         <td>
                             <div style="font-size:0.82rem;"><?= htmlspecialchars($u['email']) ?></div>
-                            <div style="font-size:0.75rem;color:#666;"><?= htmlspecialchars($u['phone'] ?? '—') ?></div>
+                            <div style="font-size:0.75rem;color:#666;"><?= htmlspecialchars($u['phone'] ?? ' | ') ?></div>
                         </td>
-                        <td style="color:#888;font-size:0.82rem;"><?= htmlspecialchars($u['city'] ?? '—') ?></td>
-                        <td><span class="badge-status <?= $u['role']==='admin'?'badge-jewelry':'badge-processing' ?>"><?= ucfirst($u['role']) ?></span></td>
+                        <td>
+                            <div style="color:#ddd;font-size:0.82rem;"><?= htmlspecialchars($u['city'] ?? ' | ') ?></div>
+                            <?php if (!empty($u['company_name'])): ?>
+                            <div style="font-size:0.72rem;color:var(--gold);"><i class="fas fa-building"></i> <?= htmlspecialchars($u['company_name']) ?></div>
+                            <?php endif; ?>
+                        </td>
+                        <td>
+                            <?php if ($u['role']==='admin' || !empty($u['is_admin'])): ?>
+                                <span class="badge-status badge-jewelry">Admin</span>
+                            <?php elseif (($u['account_type']??'')==='b2b' || $u['role']==='retailer'): ?>
+                                <span class="badge-status badge-cosmetics"><i class="fas fa-store"></i> Retailer / B2B</span>
+                            <?php else: ?>
+                                <span class="badge-status badge-processing">Customer</span>
+                            <?php endif; ?>
+                        </td>
                         <td style="font-weight:700;color:var(--gold);"><?= $u['order_count'] ?></td>
                         <td><span class="badge-status badge-<?= $u['status'] ?? 'active' ?>"><?= ucfirst($u['status'] ?? 'active') ?></span></td>
                         <td style="color:#666;font-size:0.78rem;"><?= date('M d, Y', strtotime($u['created_at'])) ?></td>
@@ -214,7 +234,7 @@ if (isset($_GET['edit_id'])) {
 
             <?php if ($totalPages > 1): ?>
             <div class="pagination">
-                <div class="pagination-info">Showing <?= $offset+1 ?>–<?= min($offset+$perPage,$totalCount) ?> of <?= $totalCount ?></div>
+                <div class="pagination-info">Showing <?= $offset+1 ?> to <?= min($offset+$perPage,$totalCount) ?> of <?= $totalCount ?></div>
                 <div class="pagination-buttons">
                     <?php for ($i=1;$i<=$totalPages;$i++): ?>
                     <a href="?page=<?= $i ?>&search=<?= urlencode($search) ?>&role=<?= urlencode($roleFilter) ?>&status=<?= urlencode($statusFilter) ?>" class="page-btn <?= $i==$page?'active':'' ?>"><?= $i ?></a>
@@ -273,9 +293,17 @@ if (isset($_GET['edit_id'])) {
                         <textarea name="address" id="editUserAddress" class="form-control" rows="2" placeholder="Full shipping address"></textarea>
                     </div>
                     <div class="form-group">
+                        <label class="form-label">Account Type</label>
+                        <select name="account_type" id="editAccountType" class="form-control">
+                            <option value="retail"><i class="fas fa-shopping-cart"></i> Retail Customer</option>
+                            <option value="b2b"><i class="fas fa-building"></i> Retailer / B2B Business</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label class="form-label">Role</label>
                         <select name="role" id="editUserRole" class="form-control">
                             <option value="customer">Customer</option>
+                            <option value="retailer">Retailer / B2B</option>
                             <option value="admin">Admin</option>
                         </select>
                     </div>
@@ -286,6 +314,22 @@ if (isset($_GET['edit_id'])) {
                             <option value="banned">Banned</option>
                             <option value="inactive">Inactive</option>
                         </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Date of Birth</label>
+                        <input type="date" name="birthdate" id="editUserBirthdate" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Company / Store Name</label>
+                        <input type="text" name="company_name" id="editCompanyName" class="form-control" placeholder="Business Name">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Business Email</label>
+                        <input type="email" name="business_email" id="editBusinessEmail" class="form-control" placeholder="business@company.com">
+                    </div>
+                    <div class="form-group form-full">
+                        <label class="form-label">Tax ID / GST Number</label>
+                        <input type="text" name="tax_id" id="editTaxId" class="form-control" placeholder="Tax Registration Number">
                     </div>
                 </div>
                 <hr class="section-divider">
@@ -314,12 +358,25 @@ function openEditModal(u) {
     document.getElementById('editUserPhone').value = u.phone || '';
     document.getElementById('editUserCity').value = u.city || '';
     document.getElementById('editUserAddress').value = u.address || '';
+    document.getElementById('editAccountType').value = u.account_type || 'retail';
     document.getElementById('editUserRole').value = u.role || 'customer';
     document.getElementById('editUserStatus').value = u.status || 'active';
+    document.getElementById('editUserBirthdate').value = u.birthdate || u.dob || '';
+    document.getElementById('editCompanyName').value = u.company_name || '';
+    document.getElementById('editBusinessEmail').value = u.business_email || '';
+    document.getElementById('editTaxId').value = u.tax_id || '';
     document.getElementById('editUserExistingImg').value = u.profile_image || '';
     document.getElementById('editUserDisplayName').textContent = u.full_name || u.username;
     document.getElementById('editUserDisplayEmail').textContent = u.email;
     document.getElementById('editAvatarInitial').textContent = (u.username||'A').charAt(0).toUpperCase();
+
+    const prev = document.getElementById('editAvatarPreview');
+    if (u.profile_image) {
+        prev.innerHTML = `<img src="../img/profiles/${u.profile_image}" style="width:100%;height:100%;object-fit:cover;">`;
+    } else {
+        prev.innerHTML = `<span id="editAvatarInitial">${(u.username||'A').charAt(0).toUpperCase()}</span>`;
+    }
+
     openModal('editUserModal');
 }
 function previewProfileImg(input) {

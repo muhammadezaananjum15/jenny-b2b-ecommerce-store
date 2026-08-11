@@ -1,4 +1,4 @@
-<?php session_start(); ?>
+<?php if (session_status() === PHP_SESSION_NONE) { session_start(); } ?>
 <?php require 'includes/header.php'; ?>
 <link rel="stylesheet" href="css/style.css">
 <?php require 'includes/navbar.php'; ?>
@@ -61,7 +61,7 @@
     <p>We use cookies to maintain your shopping cart session and improve your browsing experience. You can disable cookies in your browser settings, but this may affect site functionality.</p>
 
     <h2>5. Data Security</h2>
-    <p>Your data is protected using industry-standard encryption and secure server practices. We do not store payment card details — all payments are processed through trusted payment gateways.</p>
+    <p>Your data is protected using industry-standard encryption and secure server practices. We do not store payment card details | all payments are processed through trusted payment gateways.</p>
 
     <h2>6. Your Rights</h2>
     <p>You have the right to request access to, correction of, or deletion of your personal data at any time. Contact us at <a href="mailto:info@jennyscosmetics.com" style="color:var(--primary-gold);">info@jennyscosmetics.com</a> for any such requests.</p>

@@ -1,5 +1,5 @@
 <?php
-// includes/products_helper.php — Dynamic Product Utilities
+// includes/products_helper.php | Dynamic Product Utilities
 
 if (!function_exists('getAllProducts')) {
     function getAllProducts($category = null, $type = null) {
@@ -58,15 +58,15 @@ if (!function_exists('renderSingleProductCard')) {
                 <img src="<?= $imgPath ?>" alt="<?= $name ?>" loading="lazy" onclick="openProductPopup(<?= json_encode($name) ?>, <?= $price ?>, <?= json_encode($imgPath) ?>, <?= json_encode($desc) ?>)" style="cursor:pointer; width:100%; height:100%; object-fit:cover; transition:transform 0.5s ease;">
                 
                 <!-- BADGES -->
-                <div class="card-badges" style="position:absolute; top:10px; left:10px; display:flex; flex-direction:column; gap:4px; z-index:2; pointer-events:none;">
+                <div class="card-badges" style="position:absolute; top:10px; left:10px; display:flex; flex-direction:column; align-items:flex-start; gap:4px; z-index:2; pointer-events:none; width:auto; max-width:max-content;">
                     <?php if ($discount > 0): ?>
-                        <span style="background:linear-gradient(135deg,#e74c3c,#c0392b); color:#fff; font-size:0.68rem; font-weight:700; padding:3px 8px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.2);">-<?= $discount ?>% OFF</span>
+                        <span class="offer-badge" style="background:linear-gradient(135deg,#e74c3c,#c0392b); color:#fff; font-size:0.68rem; font-weight:700; padding:3px 10px; border-radius:14px; box-shadow:0 2px 8px rgba(0,0,0,0.2); width:auto; max-width:max-content; display:inline-flex; align-self:flex-start;">-<?= $discount ?>% OFF</span>
                     <?php endif; ?>
                     <?php if (!empty($p['is_new'])): ?>
-                        <span style="background:linear-gradient(135deg,#2ecc71,#27ae60); color:#fff; font-size:0.68rem; font-weight:700; padding:3px 8px; border-radius:12px;">NEW</span>
+                        <span style="background:linear-gradient(135deg,#2ecc71,#27ae60); color:#fff; font-size:0.68rem; font-weight:700; padding:3px 10px; border-radius:14px; width:auto; max-width:max-content; display:inline-flex; align-self:flex-start;">NEW</span>
                     <?php endif; ?>
                     <?php if (!empty($p['is_bestseller'])): ?>
-                        <span style="background:linear-gradient(135deg,#F4B400,#d19c00); color:#111; font-size:0.68rem; font-weight:700; padding:3px 8px; border-radius:12px;">BESTSELLER</span>
+                        <span style="background:linear-gradient(135deg,#F4B400,#d19c00); color:#111; font-size:0.68rem; font-weight:700; padding:3px 10px; border-radius:14px; width:auto; max-width:max-content; display:inline-flex; align-self:flex-start;">BESTSELLER</span>
                     <?php endif; ?>
                 </div>
 

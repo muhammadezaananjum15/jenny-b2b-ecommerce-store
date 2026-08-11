@@ -1,5 +1,5 @@
 <?php
-// admin/products.php — Premium Full CRUD with DB backend
+// admin/products.php | Premium Full CRUD with DB backend
 require_once 'includes/auth_check.php';
 require_once '../config/db.php';
 
@@ -159,7 +159,7 @@ $totalPages = max(1, ceil($totalCount / $perPage));
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Products — Jenny's Admin Panel</title>
+<title>Products | Jenny's Admin Panel</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="css/admin.css">
@@ -279,7 +279,7 @@ $totalPages = max(1, ceil($totalCount / $perPage));
                 <div class="table-title" style="font-size:1rem;">
                     Product Catalog
                     <?php if ($search || $catFilter || $statusFilt): ?>
-                    <span style="font-size:0.78rem;font-weight:400;color:var(--text-muted);font-family:'Poppins',sans-serif;margin-left:8px;">— Filtered</span>
+                    <span style="font-size:0.78rem;font-weight:400;color:var(--text-muted);font-family:'Poppins',sans-serif;margin-left:8px;"> Filtered</span>
                     <?php endif; ?>
                 </div>
                 <div class="table-actions">
@@ -296,10 +296,10 @@ $totalPages = max(1, ceil($totalCount / $perPage));
                         </select>
                         <select name="sort" class="form-control" style="width:160px;" onchange="this.form.submit()">
                             <option value="newest"     <?= $sortBy==='newest'?'selected':'' ?>>Newest First</option>
-                            <option value="name"       <?= $sortBy==='name'?'selected':'' ?>>Name A–Z</option>
-                            <option value="price_asc"  <?= $sortBy==='price_asc'?'selected':'' ?>>Price: Low–High</option>
-                            <option value="price_desc" <?= $sortBy==='price_desc'?'selected':'' ?>>Price: High–Low</option>
-                            <option value="stock"      <?= $sortBy==='stock'?'selected':'' ?>>Stock: Low–High</option>
+                            <option value="name"       <?= $sortBy==='name'?'selected':'' ?>>Name A to Z</option>
+                            <option value="price_asc"  <?= $sortBy==='price_asc'?'selected':'' ?>>Price: Low to High</option>
+                            <option value="price_desc" <?= $sortBy==='price_desc'?'selected':'' ?>>Price: High to Low</option>
+                            <option value="stock"      <?= $sortBy==='stock'?'selected':'' ?>>Stock: Low to High</option>
                             <option value="rating"     <?= $sortBy==='rating'?'selected':'' ?>>Top Rated</option>
                         </select>
                         <?php if ($search || $catFilter || $statusFilt): ?>
@@ -440,7 +440,7 @@ $totalPages = max(1, ceil($totalCount / $perPage));
             <!-- PAGINATION -->
             <?php if ($totalPages > 1): ?>
             <div class="pagination">
-                <div class="pagination-info">Showing <?= $offset+1 ?>–<?= min($offset+$perPage, $totalCount) ?> of <?= $totalCount ?></div>
+                <div class="pagination-info">Showing <?= $offset+1 ?> to <?= min($offset+$perPage, $totalCount) ?> of <?= $totalCount ?></div>
                 <div class="pagination-buttons">
                     <?php if ($page > 1): ?>
                     <a href="?page=<?= $page-1 ?>&search=<?= urlencode($search) ?>&cat=<?= urlencode($catFilter) ?>&sort=<?= $sortBy ?>&status=<?= urlencode($statusFilt) ?>" class="page-btn"><i class="fas fa-chevron-left"></i></a>
@@ -582,7 +582,7 @@ function renderProductFormFields($prefix = 'add') {
             <input type="number" name="old_price" id="<?= $pre ?>OldPrice" class="form-control" placeholder="999" step="0.01">
         </div>
         <div class="form-group">
-            <label class="form-label">Rating (0–5)</label>
+            <label class="form-label">Rating (0 to 5)</label>
             <input type="number" name="rating" id="<?= $pre ?>Rating" class="form-control" value="4.5" min="0" max="5" step="0.1">
         </div>
         <div class="form-group form-full">
@@ -598,7 +598,7 @@ function renderProductFormFields($prefix = 'add') {
             <div class="upload-zone" onclick="document.getElementById('<?= $pre ?>Img').click()">
                 <i class="fas fa-cloud-arrow-up"></i>
                 <p>Drop or <span>browse</span> to upload image</p>
-                <p style="font-size:0.75rem;margin-top:4px;color:var(--text-dim);">JPG, PNG, WebP — max 5MB</p>
+                <p style="font-size:0.75rem;margin-top:4px;color:var(--text-dim);">JPG, PNG, WebP | max 5MB</p>
             </div>
             <input type="file" id="<?= $pre ?>Img" name="image" accept="image/*" style="display:none;" onchange="previewImg(this,'<?= $pre ?>Preview')">
             <img id="<?= $pre ?>Preview" class="img-preview" alt="">

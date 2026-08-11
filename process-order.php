@@ -1,5 +1,5 @@
 <?php
-// process-order.php — Receives order data via AJAX POST and saves to DB
+// process-order.php | Receives order data via AJAX POST and saves to DB
 session_start();
 require_once 'config/db.php';
 

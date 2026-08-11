@@ -1,5 +1,5 @@
 <?php
-// admin/orders.php — Full Order Management v2.0
+// admin/orders.php | Full Order Management v2.0
 require_once 'includes/auth_check.php';
 require_once '../config/db.php';
 
@@ -105,7 +105,7 @@ if (isset($_GET['view_id'])) {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Orders — Jenny's Admin</title>
+<title>Orders | Jenny's Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <link rel="stylesheet" href="css/admin.css">
@@ -179,11 +179,11 @@ if (isset($_GET['view_id'])) {
                         <td style="color:var(--gold);font-weight:700;">#<?= $o['id'] ?></td>
                         <td>
                             <div style="font-weight:600;color:#fff;"><?= htmlspecialchars($o['customer_name']) ?></div>
-                            <div style="font-size:0.75rem;color:#666;"><?= htmlspecialchars($o['city'] ?? '—') ?></div>
+                            <div style="font-size:0.75rem;color:#666;"><?= htmlspecialchars($o['city'] ?? ' | ') ?></div>
                         </td>
                         <td style="font-size:0.8rem;color:#aaa;">
                             <div><?= htmlspecialchars($o['customer_email']) ?></div>
-                            <div style="font-size:0.75rem;color:#666;"><?= htmlspecialchars($o['customer_phone'] ?? '—') ?></div>
+                            <div style="font-size:0.75rem;color:#666;"><?= htmlspecialchars($o['customer_phone'] ?? ' | ') ?></div>
                         </td>
                         <td style="font-weight:700;color:var(--gold);">Rs.<?= number_format($o['total']) ?></td>
                         <td style="font-size:0.8rem;"><?= htmlspecialchars($o['payment_method']) ?></td>

@@ -1,4 +1,4 @@
-<!-- Font Awesome 6.5 is loaded by header.php — no duplicate here -->
+<!-- Font Awesome 6.5 is loaded by header.php | no duplicate here -->
 
 <!-- footer.php -->
 <style>
@@ -245,6 +245,18 @@
 
 <!-- AOS JS -->
 <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+
+<!-- Floating WhatsApp Button (Right Side, above scroll-to-top) -->
+<a href="https://wa.me/923000000000?text=Hello%20Jenny%27s%20Cosmetics%2C%20I%20have%20an%20inquiry" 
+   class="whatsapp-float-btn" 
+   target="_blank" 
+   rel="noopener noreferrer" 
+   aria-label="Chat on WhatsApp"
+   title="Chat with us on WhatsApp"
+   style="position:fixed !important; bottom:88px !important; right:28px !important; left:auto !important; width:56px !important; height:56px !important; background:linear-gradient(135deg, #25D366 0%, #128C7E 100%) !important; color:#ffffff !important; border-radius:50% !important; display:flex !important; align-items:center !important; justify-content:center !important; font-size:2rem !important; box-shadow:0 8px 25px rgba(37, 211, 102, 0.45) !important; z-index:99999 !important; text-decoration:none !important; cursor:pointer !important; transition:all 0.3s ease !important;">
+    <i class="fab fa-whatsapp" style="color:#ffffff !important; font-size:2.1rem !important; margin:0 !important; line-height:1 !important; pointer-events:none !important;"></i>
+    <span class="whatsapp-tooltip">Chat with Us</span>
+</a>
 
 <script>
 AOS.init({ duration:1000, once:true });

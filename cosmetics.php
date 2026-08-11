@@ -1,4 +1,4 @@
-<?php session_start(); ?>
+<?php if (session_status() === PHP_SESSION_NONE) { session_start(); } ?>
 
 <?php require 'includes/header.php'; ?>
 
@@ -56,8 +56,8 @@
             <div class="filter-group">
                 <h4>Price Range (Rs.)</h4>
                 <div class="price-range-wrapper">
-                    <input type="number" id="minPriceInput" placeholder="Min Price (e.g. 300)" min="0">
-                    <input type="number" id="maxPriceInput" placeholder="Max Price (e.g. 1000)" min="0">
+                    <input type="number" id="minPriceInput" placeholder="Min Price (e.g. 300)" min="0" oninput="applyFilters()">
+                    <input type="number" id="maxPriceInput" placeholder="Max Price (e.g. 1000)" min="0" oninput="applyFilters()">
                     <button class="btn-apply-price" onclick="applyFilters()">Apply Price</button>
                 </div>
             </div>
@@ -67,14 +67,33 @@
 
     <!-- RIGHT CONTENT -->
     <div class="category-content">
-        <h2 class="section-title" style="text-align: left;">All Cosmetics</h2>
-        
-            <div class="category-search-wrapper" style="margin: 0 0 30px 0;">
-                <input type="text" id="categorySearchInput" placeholder="Search product here..." onkeyup="filterCategoryProducts()">
-                <!-- Cancel Button Link Fixed -->
-                <button type="button" class="clear-search-btn" id="clearSearchBtn" onclick="clearAllFilters()"><i class="fas fa-times-circle"></i></button>
-                <button><i class="fas fa-search"></i></button>
+        <div class="category-header-toolbar" style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; margin-bottom:20px; gap:15px; border-bottom:1px solid #eee; padding-bottom:15px;">
+            <div>
+                <h2 class="section-title" style="text-align: left; margin:0; font-size:1.8rem; font-family:var(--font-heading);">All <span style="color:var(--primary-gold)">Cosmetics</span></h2>
+                <p style="color:var(--text-grey); font-size:0.88rem; margin-top:4px;" id="productsCount">Loading products...</p>
             </div>
+            
+            <div style="display:flex; align-items:center; gap:12px;">
+                <label for="sortSelect" style="font-size:0.85rem; font-weight:600; color:var(--dark-black); display:flex; align-items:center; gap:6px;">
+                    <i class="fas fa-sort-amount-down" style="color:var(--primary-gold);"></i> Sort:
+                </label>
+                <select id="sortSelect" onchange="applyFilters()" style="padding:8px 14px; border:1px solid #ddd; border-radius:20px; font-size:0.85rem; background:#fff; font-family:var(--font-body); cursor:pointer; outline:none;">
+                    <option value="default">Default</option>
+                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-high">Price: High to Low</option>
+                    <option value="rating">Highest Rated</option>
+                    <option value="name">Name (A-Z)</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="category-search-wrapper">
+            <input type="text" id="categorySearchInput" placeholder="Search cosmetics (e.g., foundation, lipstick, blush)..." oninput="applyFilters()" onkeyup="applyFilters()">
+            <button type="button" class="clear-search-btn" id="clearSearchBtn" onclick="clearAllFilters()" title="Clear search"><i class="fas fa-times-circle"></i></button>
+            <button type="button" onclick="applyFilters()"><i class="fas fa-search"></i></button>
+        </div>
+
+        <div id="activeFilterChips" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px;"></div>
 
              <!-- PRODUCTS GRID (SIRF COSMETICS CARDS) -->
              <div class="category-grid" id="categoryGrid" data-aos="fade-up">

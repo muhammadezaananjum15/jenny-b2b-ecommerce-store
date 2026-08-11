@@ -1,5 +1,5 @@
 <?php
-// admin/coupons.php — Coupons & Discount Management v2.0
+// admin/coupons.php | Coupons & Discount Management v2.0
 require_once 'includes/auth_check.php';
 require_once '../config/db.php';
 
@@ -46,7 +46,7 @@ $coupons = $pdo->query("SELECT * FROM coupons ORDER BY created_at DESC")->fetchA
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Coupons — Jenny's Admin</title>
+<title>Coupons | Jenny's Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <link rel="stylesheet" href="css/admin.css">
@@ -88,7 +88,7 @@ $coupons = $pdo->query("SELECT * FROM coupons ORDER BY created_at DESC")->fetchA
                     <?php foreach ($coupons as $c): ?>
                     <tr>
                         <td><span class="coupon-badge"><?= htmlspecialchars($c['code']) ?></span></td>
-                        <td style="color:#ccc;font-size:0.84rem;"><?= htmlspecialchars($c['description'] ?: '—') ?></td>
+                        <td style="color:#ccc;font-size:0.84rem;"><?= htmlspecialchars($c['description'] ?: ' | ') ?></td>
                         <td style="font-weight:700;color:var(--gold);">
                             <?= $c['discount_type']==='percentage' ? $c['discount_value'].'%' : 'Rs.'.$c['discount_value'] ?>
                         </td>

@@ -1,5 +1,5 @@
 <?php
-// admin/analytics.php — Detailed Business Analytics v2.0
+// admin/analytics.php | Detailed Business Analytics v2.0
 require_once 'includes/auth_check.php';
 require_once '../config/db.php';
 
@@ -46,7 +46,7 @@ $payTotals = array_map('floatval', array_column($paymentBreakdown, 'total_amount
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Analytics — Jenny's Admin</title>
+<title>Analytics | Jenny's Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <link rel="stylesheet" href="css/admin.css">

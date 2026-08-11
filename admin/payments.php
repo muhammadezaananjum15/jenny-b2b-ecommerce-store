@@ -1,5 +1,5 @@
 <?php
-// admin/payments.php — Payment Tracking & Analytics v2.0
+// admin/payments.php | Payment Tracking & Analytics v2.0
 require_once 'includes/auth_check.php';
 require_once '../config/db.php';
 
@@ -69,7 +69,7 @@ $totalPages = ceil($totalRecords / $perPage);
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Payments — Jenny's Admin</title>
+<title>Payments | Jenny's Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <link rel="stylesheet" href="css/admin.css">
@@ -157,7 +157,7 @@ $totalPages = ceil($totalRecords / $perPage);
                         <td><span class="label-tag"><?= htmlspecialchars($p['method']) ?></span></td>
                         <td style="font-weight:700;color:var(--gold);">Rs.<?= number_format($p['amount']) ?></td>
                         <td><span class="badge-status badge-<?= $p['status'] ?>"><?= ucfirst($p['status']) ?></span></td>
-                        <td style="color:#666;font-size:0.78rem;"><?= $p['paid_at'] ? date('M d, Y H:i', strtotime($p['paid_at'])) : '—' ?></td>
+                        <td style="color:#666;font-size:0.78rem;"><?= $p['paid_at'] ? date('M d, Y H:i', strtotime($p['paid_at'])) : ' | ' ?></td>
                         <td>
                             <form method="POST" style="display:flex;gap:6px;align-items:center;">
                                 <input type="hidden" name="payment_id" value="<?= $p['id'] ?>">

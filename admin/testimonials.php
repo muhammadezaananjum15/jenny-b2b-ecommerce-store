@@ -1,5 +1,5 @@
 <?php
-// admin/testimonials.php — Full Testimonial CRUD & Control v2.0
+// admin/testimonials.php | Full Testimonial CRUD & Control v2.0
 require_once 'includes/auth_check.php';
 require_once '../config/db.php';
 
@@ -60,7 +60,7 @@ $testimonials = $pdo->query("SELECT * FROM testimonials ORDER BY sort_order ASC,
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Testimonials — Jenny's Admin</title>
+<title>Testimonials | Jenny's Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <link rel="stylesheet" href="css/admin.css">
@@ -163,7 +163,7 @@ $testimonials = $pdo->query("SELECT * FROM testimonials ORDER BY sort_order ASC,
                         <input type="text" name="client_title" id="tTitle" class="form-control" placeholder="Beauty Blogger / Verified Customer">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Rating (1–5)</label>
+                        <label class="form-label">Rating (1 to 5)</label>
                         <select name="rating" id="tRating" class="form-control">
                             <option value="5">★★★★★ 5 Stars</option>
                             <option value="4">★★★★☆ 4 Stars</option>

@@ -1,5 +1,5 @@
 <?php
-// auth/register.php — B2B SaaS Premium Registration
+// auth/register.php | B2B SaaS Premium Registration
 session_start();
 require_once '../config/db.php';
 require_once 'session.php';
@@ -18,6 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email           = trim($_POST['email']           ?? '');
     $password        = $_POST['password']             ?? '';
     $confirm_pw      = $_POST['confirm_password']     ?? '';
+    $birthdate       = trim($_POST['birthdate']       ?? '');
     $company_name    = trim($_POST['company_name']    ?? '');
     $business_email  = trim($_POST['business_email']  ?? '');
     $phone           = trim($_POST['phone']           ?? '');
@@ -32,60 +33,90 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Password must be at least 6 characters.';
     } elseif ($password !== $confirm_pw) {
         $error = 'Passwords do not match.';
-    } elseif ($account_type === 'b2b' && empty($company_name)) {
-        $error = 'Company name is required for B2B registration.';
+    } elseif (empty($birthdate)) {
+        $error = 'Date of birth is required.';
     } else {
-        try {
-            // Unique username
-            $base = $username; $counter = 1;
-            while (true) {
-                $chk = $pdo->prepare("SELECT id FROM users WHERE username = ?");
-                $chk->execute([$username]);
-                if (!$chk->fetch()) break;
-                $username = $base . $counter++;
-            }
-
-            // Email uniqueness
-            $chk2 = $pdo->prepare("SELECT id FROM users WHERE email = ?");
-            $chk2->execute([$email]);
-            if ($chk2->fetch()) {
-                $error = 'This email address is already registered.';
-            } else {
-                $hash = password_hash($password, PASSWORD_DEFAULT);
-                $stmt = $pdo->prepare("INSERT INTO users
-                    (username, email, password, role, account_type, full_name, phone, company_name, business_email, tax_id, status)
-                    VALUES (?, ?, ?, 'customer', ?, ?, ?, ?, ?, ?, 'active')");
-                $stmt->execute([
-                    $username, $email, $hash,
-                    $account_type,
-                    $username,   // full_name fallback
-                    $phone,
-                    $company_name,
-                    $business_email ?: $email,
-                    $tax_id
-                ]);
-
-                $_SESSION['user_id']  = $pdo->lastInsertId();
-                $_SESSION['username'] = $username;
-                $_SESSION['email']    = $email;
-                $_SESSION['role']     = 'customer';
-
-                header("Location: ../index.php");
-                exit();
-            }
-        } catch (PDOException $e) {
-            // Fallback: columns may not exist yet — insert without B2B fields
+        // Age 16+ check
+        $dob      = DateTime::createFromFormat('Y-m-d', $birthdate);
+        $today    = new DateTime();
+        $age      = $dob ? (int)$today->diff($dob)->y : 0;
+        if (!$dob || $birthdate !== $dob->format('Y-m-d')) {
+            $error = 'Please enter a valid date of birth.';
+        } elseif ($age < 16) {
+            $error = 'You must be at least 16 years old to register.';
+        } elseif ($account_type === 'b2b' && empty($company_name)) {
+            $error = 'Company name is required for B2B registration.';
+        } else {
             try {
-                $hash = password_hash($password, PASSWORD_DEFAULT);
-                $stmt = $pdo->prepare("INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, 'customer')");
-                $stmt->execute([$username, $email, $hash]);
-                $_SESSION['user_id']  = $pdo->lastInsertId();
-                $_SESSION['username'] = $username;
-                $_SESSION['email']    = $email;
-                $_SESSION['role']     = 'customer';
-                header("Location: ../index.php"); exit();
-            } catch (PDOException $ex) {
-                $error = 'Registration failed. Please try again.';
+                // Unique username
+                $base = $username; $counter = 1;
+                while (true) {
+                    $chk = $pdo->prepare("SELECT id FROM users WHERE username = ?");
+                    $chk->execute([$username]);
+                    if (!$chk->fetch()) break;
+                    $username = $base . $counter++;
+                }
+
+                // Email uniqueness
+                $chk2 = $pdo->prepare("SELECT id FROM users WHERE email = ?");
+                $chk2->execute([$email]);
+                if ($chk2->fetch()) {
+                    $error = 'This email address is already registered.';
+                } else {
+                    $hash = password_hash($password, PASSWORD_DEFAULT);
+                    // Try with birthdate column first
+                    try {
+                        $stmt = $pdo->prepare("INSERT INTO users
+                            (username, email, password, role, account_type, full_name, phone, company_name, business_email, tax_id, birthdate, status)
+                            VALUES (?, ?, ?, 'customer', ?, ?, ?, ?, ?, ?, ?, 'active')");
+                        $stmt->execute([
+                            $username, $email, $hash,
+                            $account_type,
+                            $username,
+                            $phone,
+                            $company_name,
+                            $business_email ?: $email,
+                            $tax_id,
+                            $birthdate
+                        ]);
+                    } catch (PDOException $e2) {
+                        // Fallback without birthdate column
+                        $stmt = $pdo->prepare("INSERT INTO users
+                            (username, email, password, role, account_type, full_name, phone, company_name, business_email, tax_id, status)
+                            VALUES (?, ?, ?, 'customer', ?, ?, ?, ?, ?, ?, 'active')");
+                        $stmt->execute([
+                            $username, $email, $hash,
+                            $account_type,
+                            $username,
+                            $phone,
+                            $company_name,
+                            $business_email ?: $email,
+                            $tax_id
+                        ]);
+                    }
+
+                    $_SESSION['user_id']  = $pdo->lastInsertId();
+                    $_SESSION['username'] = $username;
+                    $_SESSION['email']    = $email;
+                    $_SESSION['role']     = 'customer';
+
+                    header("Location: ../index.php");
+                    exit();
+                }
+            } catch (PDOException $e) {
+                // Minimal fallback insert
+                try {
+                    $hash = password_hash($password, PASSWORD_DEFAULT);
+                    $stmt = $pdo->prepare("INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, 'customer')");
+                    $stmt->execute([$username, $email, $hash]);
+                    $_SESSION['user_id']  = $pdo->lastInsertId();
+                    $_SESSION['username'] = $username;
+                    $_SESSION['email']    = $email;
+                    $_SESSION['role']     = 'customer';
+                    header("Location: ../index.php"); exit();
+                } catch (PDOException $ex) {
+                    $error = 'Registration failed. Please try again.';
+                }
             }
         }
     }
@@ -99,13 +130,13 @@ $prefillType = in_array($_GET['type'] ?? '', ['b2b','retail']) ? $_GET['type'] :
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Create Account — Jenny's Cosmetics &amp; Jewelry</title>
+<title>Create Account | Jenny's Cosmetics &amp; Jewelry</title>
 <meta name="description" content="Register for a Jenny's Cosmetics & Jewelry account. Retail customers and B2B wholesalers welcome.">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 /* ================================================================
-   Jenny's B2B SaaS Register — Full Rebuild
+   Jenny's B2B SaaS Register | Full Rebuild
    Design tokens: Gold #FFAB00 | Ink Black #111111 | Charcoal #333333 | White
 ================================================================ */
 :root {
@@ -523,7 +554,7 @@ a { text-decoration: none; color: inherit; }
     <div class="hero-brand">
         <div class="hero-badge"><i class="fas fa-store"></i> Open Your Account Today</div>
         <h1 class="hero-logo">Join<br>Jenny's<br><span>B2B Network</span></h1>
-        <p class="hero-tagline">Access wholesale pricing, early-access collections, and a dedicated business portal — designed for Pakistan's beauty retailers.</p>
+        <p class="hero-tagline">Access wholesale pricing, early-access collections, and a dedicated business portal | designed for Pakistan's beauty retailers.</p>
         <div class="hero-features">
             <div class="hero-feature">
                 <div class="feature-icon"><i class="fas fa-percent"></i></div>
@@ -643,6 +674,29 @@ a { text-decoration: none; color: inherit; }
                     <span class="field-error-msg">Passwords must match.</span>
                 </div>
             </div>
+        </div>
+
+        <!-- ── DATE OF BIRTH & AGE GATE (MUST BE 16+) ── -->
+        <div class="form-group dob-luxury-card" id="dobGroup" style="background: rgba(244,180,0,0.05); border: 1.5px solid rgba(244,180,0,0.3); padding: 18px 20px; border-radius: 16px; margin-bottom: 24px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
+                <label class="form-label" for="birthdate" style="margin-bottom:0; font-weight:700; color:var(--dark-black);">
+                    Date of Birth <span class="req">*</span>
+                </label>
+                <span style="font-size:0.72rem; background: linear-gradient(135deg, var(--gold), #c49000); color:#111; padding:3px 10px; border-radius:20px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px;">
+                    <i class="fas fa-user-shield"></i> 16+ Verification
+                </span>
+            </div>
+            <div class="input-wrap">
+                <i class="fas fa-calendar-alt input-icon" style="color:var(--gold);"></i>
+                <input type="date" id="birthdate" name="birthdate" class="form-input"
+                    value="<?= htmlspecialchars($_POST['birthdate'] ?? '') ?>"
+                    max=""
+                    autocomplete="bday" required
+                    oninput="validateAge(this)">
+                <span class="field-error-msg" id="ageErrorMsg" style="font-weight:700;">You must be at least 16 years old to register.</span>
+            </div>
+            <div id="ageDisplay" style="font-size:0.82rem; color:#27ae60; margin-top:8px; font-weight:700; display:none;"></div>
+            <div style="font-size:0.74rem; color:#888; margin-top:6px;">You must be at least 16 years of age to register an account with Jenny's Store.</div>
         </div>
 
         <!-- ── B2B SECTION ── -->
@@ -765,6 +819,44 @@ function switchType(type) {
         : '<i class="fas fa-user-plus"></i>&nbsp; Create Account';
 }
 
+// ── DATE OF BIRTH / AGE VALIDATION ──
+function validateAge(input) {
+    const errMsg   = document.getElementById('ageErrorMsg');
+    const display  = document.getElementById('ageDisplay');
+    if (!input.value) { errMsg && (errMsg.style.display = 'none'); display && (display.style.display = 'none'); return true; }
+    const dob   = new Date(input.value);
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const m = today.getMonth() - dob.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+
+    if (age < 16) {
+        input.classList.add('input-error');
+        if (errMsg) { errMsg.textContent = 'You must be at least 16 years old to register.'; errMsg.style.display = 'block'; }
+        if (display) display.style.display = 'none';
+        return false;
+    } else {
+        input.classList.remove('input-error');
+        if (errMsg) errMsg.style.display = 'none';
+        if (display) {
+            display.textContent = `Age confirmed: ${age} years old ✓`;
+            display.style.display = 'block';
+            display.style.color = '#2ECC71';
+        }
+        return true;
+    }
+}
+
+// Set max date = 16 years ago (so user can't pick a future date or under-16 date in picker)
+document.addEventListener('DOMContentLoaded', function() {
+    const dobInput = document.getElementById('birthdate');
+    if (dobInput) {
+        const maxDate = new Date();
+        maxDate.setFullYear(maxDate.getFullYear() - 16);
+        dobInput.max = maxDate.toISOString().split('T')[0];
+    }
+});
+
 // ── PASS TOGGLE ──
 function togglePass(inputId, iconId) {
     const inp = document.getElementById(inputId);
@@ -817,6 +909,17 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
     if (isB2B) {
         const cn = document.getElementById('company_name');
         if (!cn.value.trim()) { cn.classList.add('input-error'); valid = false; }
+    }
+
+    // DOB / Age validation
+    const dobInput = document.getElementById('birthdate');
+    if (!dobInput || !dobInput.value.trim()) {
+        if (dobInput) dobInput.classList.add('input-error');
+        const errMsg = document.getElementById('ageErrorMsg');
+        if (errMsg) { errMsg.textContent = 'Date of birth is required.'; errMsg.style.display = 'block'; }
+        valid = false;
+    } else if (!validateAge(dobInput)) {
+        valid = false;
     }
 
     if (!valid) { e.preventDefault(); return; }

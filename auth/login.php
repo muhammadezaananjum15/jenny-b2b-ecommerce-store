@@ -1,5 +1,5 @@
 <?php
-// auth/login.php — B2B SaaS Premium Login
+// auth/login.php | B2B SaaS Premium Login
 session_start();
 require_once '../config/db.php';
 require_once 'session.php';
@@ -72,13 +72,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sign In — Jenny's Cosmetics &amp; Jewelry</title>
+<title>Sign In | Jenny's Cosmetics &amp; Jewelry</title>
 <meta name="description" content="Sign in to your Jenny's Cosmetics & Jewelry account to access exclusive collections and manage your orders.">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 /* ================================================================
-   Jenny's B2B SaaS Login — Full Rebuild
+   Jenny's B2B SaaS Login | Full Rebuild
    Design tokens: Gold #FFAB00 | Ink Black #111111 | Charcoal #333333 | White #FFFFFF
    Typography: Playfair Display (headings) | Poppins (body)
    8px spacing grid

@@ -1,5 +1,5 @@
 <?php
-// config/db.php — Resilient Auto-Setup Connection (jennys_db v2.0)
+// config/db.php | Resilient Auto-Setup Connection (jennys_db v2.0)
 $host     = 'localhost';
 $dbname   = 'jennys_db';
 $username = 'root';
@@ -52,13 +52,99 @@ try {
             }
         }
 
-        // 5b. Auto-migrate B2B + brand columns (idempotent)
+        // 5b. Auto-migrate B2B + brand + profile columns (idempotent)
         $migrations = [
+            // Products
             "ALTER TABLE `products` ADD COLUMN IF NOT EXISTS `brand` varchar(100) DEFAULT 'Jenny Luxe'",
+            // User B2B fields
             "ALTER TABLE `users` ADD COLUMN IF NOT EXISTS `account_type` enum('retail','b2b') DEFAULT 'retail'",
             "ALTER TABLE `users` ADD COLUMN IF NOT EXISTS `company_name` varchar(150) DEFAULT NULL",
             "ALTER TABLE `users` ADD COLUMN IF NOT EXISTS `business_email` varchar(150) DEFAULT NULL",
             "ALTER TABLE `users` ADD COLUMN IF NOT EXISTS `tax_id` varchar(100) DEFAULT NULL",
+            // User profile fields
+            "ALTER TABLE `users` ADD COLUMN IF NOT EXISTS `full_name` varchar(150) DEFAULT NULL",
+            "ALTER TABLE `users` ADD COLUMN IF NOT EXISTS `phone` varchar(20) DEFAULT NULL",
+            "ALTER TABLE `users` ADD COLUMN IF NOT EXISTS `birthdate` date DEFAULT NULL",
+            "ALTER TABLE `users` ADD COLUMN IF NOT EXISTS `address` text DEFAULT NULL",
+            "ALTER TABLE `users` ADD COLUMN IF NOT EXISTS `city` varchar(100) DEFAULT NULL",
+            "ALTER TABLE `users` ADD COLUMN IF NOT EXISTS `profile_image` varchar(255) DEFAULT NULL",
+            "ALTER TABLE `users` ADD COLUMN IF NOT EXISTS `bio` text DEFAULT NULL",
+            "ALTER TABLE `users` ADD COLUMN IF NOT EXISTS `status` enum('active','banned','inactive') DEFAULT 'active'",
+            // Contact messages table
+            "CREATE TABLE IF NOT EXISTS `contact_messages` (
+                `id` int(11) NOT NULL AUTO_INCREMENT,
+                `name` varchar(150) NOT NULL,
+                `email` varchar(150) NOT NULL,
+                `phone` varchar(30) DEFAULT NULL,
+                `subject` varchar(255) NOT NULL,
+                `message` text NOT NULL,
+                `is_read` tinyint(1) DEFAULT 0,
+                `admin_reply` text DEFAULT NULL,
+                `replied_at` timestamp NULL DEFAULT NULL,
+                `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
+            "ALTER TABLE `contact_messages` ADD COLUMN IF NOT EXISTS `admin_reply` text DEFAULT NULL",
+            "ALTER TABLE `contact_messages` ADD COLUMN IF NOT EXISTS `replied_at` timestamp NULL DEFAULT NULL",
+            "ALTER TABLE `contact_messages` ADD COLUMN IF NOT EXISTS `is_read` tinyint(1) DEFAULT 0",
+            // Coupons table
+            "CREATE TABLE IF NOT EXISTS `coupons` (
+                `id` int(11) NOT NULL AUTO_INCREMENT,
+                `code` varchar(50) NOT NULL UNIQUE,
+                `description` text DEFAULT NULL,
+                `discount_type` enum('percentage','fixed') DEFAULT 'percentage',
+                `discount_value` decimal(10,2) NOT NULL DEFAULT 0,
+                `min_order` decimal(10,2) DEFAULT 0,
+                `max_uses` int(11) DEFAULT NULL,
+                `used_count` int(11) DEFAULT 0,
+                `is_active` tinyint(1) DEFAULT 1,
+                `expires_at` date DEFAULT NULL,
+                `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
+            "ALTER TABLE `coupons` ADD COLUMN IF NOT EXISTS `description` text DEFAULT NULL",
+            "ALTER TABLE `coupons` ADD COLUMN IF NOT EXISTS `discount_type` enum('percentage','fixed') DEFAULT 'percentage'",
+            "ALTER TABLE `coupons` ADD COLUMN IF NOT EXISTS `discount_value` decimal(10,2) DEFAULT 0",
+            // Order items
+            "CREATE TABLE IF NOT EXISTS `order_items` (
+                `id` int(11) NOT NULL AUTO_INCREMENT,
+                `order_id` int(11) NOT NULL,
+                `product_id` int(11) DEFAULT NULL,
+                `product_name` varchar(200) NOT NULL,
+                `product_image` varchar(255) DEFAULT NULL,
+                `price` decimal(10,2) NOT NULL,
+                `quantity` int(11) DEFAULT 1,
+                `subtotal` decimal(10,2) NOT NULL,
+                PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
+            // Payments
+            "CREATE TABLE IF NOT EXISTS `payments` (
+                `id` int(11) NOT NULL AUTO_INCREMENT,
+                `order_id` int(11) NOT NULL,
+                `method` varchar(50) DEFAULT 'COD',
+                `amount` decimal(10,2) NOT NULL,
+                `status` enum('pending','paid','failed','refunded') DEFAULT 'pending',
+                `transaction_id` varchar(100) DEFAULT NULL,
+                `paid_at` timestamp NULL DEFAULT NULL,
+                `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
+            // Notifications
+            "CREATE TABLE IF NOT EXISTS `notifications` (
+                `id` int(11) NOT NULL AUTO_INCREMENT,
+                `type` varchar(50) DEFAULT 'info',
+                `title` varchar(255) NOT NULL,
+                `message` text DEFAULT NULL,
+                `is_read` tinyint(1) DEFAULT 0,
+                `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
+            // Orders extra columns
+            "ALTER TABLE `orders` ADD COLUMN IF NOT EXISTS `order_number` varchar(50) DEFAULT NULL",
+            "ALTER TABLE `orders` ADD COLUMN IF NOT EXISTS `payment_status` enum('pending','paid','failed','refunded') DEFAULT 'pending'",
+            "ALTER TABLE `orders` ADD COLUMN IF NOT EXISTS `coupon_code` varchar(50) DEFAULT NULL",
+            "ALTER TABLE `orders` ADD COLUMN IF NOT EXISTS `notes` text DEFAULT NULL",
+            "ALTER TABLE `orders` ADD COLUMN IF NOT EXISTS `total_amount` decimal(10,2) DEFAULT NULL",
         ];
         foreach ($migrations as $m) {
             try { $pdo->exec($m); } catch (PDOException $ex) { /* already exists */ }

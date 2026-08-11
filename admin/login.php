@@ -1,5 +1,5 @@
 <?php
-// admin/login.php — Jenny's Admin Login v2.0
+// admin/login.php | Jenny's Admin Login v2.0
 session_start();
 
 if (isset($_SESSION['admin_logged_in'])) {
@@ -96,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Login — Jenny's Cosmetics & Jewelry</title>
+<title>Admin Login | Jenny's Cosmetics & Jewelry</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <style>
@@ -203,7 +203,7 @@ body { font-family: 'Poppins', sans-serif; min-height: 100vh; display: flex; ove
 <!-- RIGHT PANEL -->
 <div class="auth-right">
     <div class="login-header">
-        <h1>Welcome Back 👋</h1>
+        <h1>Welcome Back <i class="fas fa-hand-wave" style="color:var(--gold);"></i></h1>
         <p>Sign in to access Jenny's admin dashboard</p>
     </div>
 

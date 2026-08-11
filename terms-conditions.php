@@ -1,4 +1,4 @@
-<?php session_start(); ?>
+<?php if (session_status() === PHP_SESSION_NONE) { session_start(); } ?>
 <?php require 'includes/header.php'; ?>
 <link rel="stylesheet" href="css/style.css">
 <?php require 'includes/navbar.php'; ?>
@@ -54,7 +54,7 @@
     <p>We currently accept Cash on Delivery (COD) as our primary payment method. For online payments, you agree not to engage in any fraudulent transactions. We reserve the right to refuse or cancel any order suspected of fraud.</p>
 
     <h2>5. Intellectual Property</h2>
-    <p>All content on this website — including text, images, logos, and design — is the property of Jenny's Cosmetics &amp; Jewelry and is protected by copyright law. You may not reproduce, distribute, or use any content without our written consent.</p>
+    <p>All content on this website | including text, images, logos, and design | is the property of Jenny's Cosmetics &amp; Jewelry and is protected by copyright law. You may not reproduce, distribute, or use any content without our written consent.</p>
 
     <h2>6. Limitation of Liability</h2>
     <p>Jenny's Cosmetics &amp; Jewelry shall not be liable for any indirect, incidental, or consequential damages arising from the use of our products or website. Our maximum liability is limited to the amount paid for the specific product in question.</p>

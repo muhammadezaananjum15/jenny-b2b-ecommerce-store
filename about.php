@@ -6,7 +6,7 @@ require 'includes/header.php';
 <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
 <style>
 /* ============================================================
-   ABOUT PAGE — PREMIUM REDESIGN
+   ABOUT PAGE | PREMIUM REDESIGN
    Preserving brand: Gold #F4B400 | Black #1A1A1A | Poppins + Playfair
 ============================================================ */
 
@@ -103,25 +103,7 @@ require 'includes/header.php';
     transform: translateY(-2px);
 }
 
-/* Animated stats bar at bottom of hero */
-.about-hero-statsbar {
-    position: absolute; bottom: 0; left: 0; right: 0; z-index: 3;
-    background: rgba(0,0,0,0.6);
-    backdrop-filter: blur(12px);
-    border-top: 1px solid rgba(244,180,0,0.2);
-    display: grid; grid-template-columns: repeat(4,1fr);
-}
-.about-stat-item {
-    padding: 22px 20px; text-align: center;
-    border-right: 1px solid rgba(255,255,255,0.06);
-}
-.about-stat-item:last-child { border-right: none; }
-.about-stat-num {
-    font-family: var(--font-heading);
-    font-size: 2rem; font-weight: 700;
-    color: var(--primary-gold); line-height: 1;
-}
-.about-stat-lbl { font-size: 0.75rem; color: rgba(255,255,255,0.55); margin-top: 4px; text-transform: uppercase; letter-spacing: 1px; }
+
 
 /* ── BRAND STORY ── */
 .about-story-wrap {
@@ -229,14 +211,20 @@ require 'includes/header.php';
 .about-mvv-card:hover { border-color: rgba(244,180,0,0.25); transform: translateY(-6px); box-shadow: 0 20px 50px rgba(0,0,0,0.4); }
 .about-mvv-card:hover::before { opacity: 1; }
 .about-mvv-icon {
-    width: 62px; height: 62px; border-radius: 16px;
-    background: linear-gradient(135deg, rgba(244,180,0,0.2), rgba(244,180,0,0.08));
-    border: 1px solid rgba(244,180,0,0.25);
+    width: 66px; height: 66px; border-radius: 18px;
+    background: linear-gradient(135deg, rgba(244,180,0,0.25), rgba(244,180,0,0.1));
+    border: 1.5px solid rgba(244,180,0,0.4);
     display: flex; align-items: center; justify-content: center;
-    font-size: 1.5rem; color: var(--primary-gold);
+    font-size: 1.7rem; color: #F4B400;
     margin-bottom: 28px; transition: all 0.3s ease;
+    box-shadow: 0 6px 20px rgba(244,180,0,0.15);
 }
-.about-mvv-card:hover .about-mvv-icon { background: rgba(244,180,0,0.25); transform: scale(1.08); }
+.about-mvv-icon i {
+    color: #F4B400 !important;
+    font-size: 1.7rem !important;
+    display: inline-block !important;
+}
+.about-mvv-card:hover .about-mvv-icon { background: rgba(244,180,0,0.35); transform: scale(1.08); box-shadow: 0 8px 25px rgba(244,180,0,0.3); }
 .about-mvv-card h3 { font-family: var(--font-heading); font-size: 1.35rem; color: #fff; margin-bottom: 14px; }
 .about-mvv-card p { color: rgba(255,255,255,0.5); line-height: 1.75; font-size: 0.92rem; }
 
@@ -391,7 +379,6 @@ require 'includes/header.php';
 }
 @media (max-width: 900px) {
     .about-mvv-grid, .about-team-grid, .about-trust-grid { grid-template-columns: 1fr 1fr; }
-    .about-hero-statsbar { grid-template-columns: repeat(2,1fr); position: relative; }
 }
 @media (max-width: 768px) {
     .about-hero-inner { padding: 100px 5% 40px; }
@@ -405,8 +392,6 @@ require 'includes/header.php';
 }
 @media (max-width: 600px) {
     .about-mvv-grid, .about-team-grid, .about-trust-grid { grid-template-columns: 1fr; }
-    .about-hero-statsbar { grid-template-columns: repeat(2,1fr); }
-    .about-stat-num { font-size: 1.5rem; }
     .about-cta-buttons { flex-direction: column; align-items: center; }
     .tl-item { grid-template-columns: 50px 1fr; }
 }
@@ -423,33 +408,13 @@ require 'includes/header.php';
 
     <div class="about-hero-inner" data-aos="fade-up">
         <div class="about-hero-badge">
-            <i class="fas fa-gem"></i> Est. 2020 — Karachi, Pakistan
+            <i class="fas fa-gem"></i> Est. 2020 | Karachi, Pakistan
         </div>
         <h1>Where Beauty Meets <span>Passion</span></h1>
-        <p>From a home-based dream to Pakistan's most-loved cosmetics & jewelry destination — crafted for the modern woman who deserves the best.</p>
+        <p>From a home-based dream to Pakistan's most-loved cosmetics & jewelry destination | crafted for the modern woman who deserves the best.</p>
         <div class="about-hero-actions">
             <a href="products.php" class="btn-hero-primary"><i class="fas fa-shopping-bag" style="margin-right:8px;"></i> Shop Our Collection</a>
             <a href="contact.php" class="btn-hero-outline"><i class="fas fa-headset" style="margin-right:8px;"></i> Get in Touch</a>
-        </div>
-    </div>
-
-    <!-- Stat bar at bottom of hero -->
-    <div class="about-hero-statsbar">
-        <div class="about-stat-item">
-            <div class="about-stat-num" data-count="6">0</div>
-            <div class="about-stat-lbl">Years in Business</div>
-        </div>
-        <div class="about-stat-item">
-            <div class="about-stat-num" data-count="15000">0</div>
-            <div class="about-stat-lbl">Happy Customers</div>
-        </div>
-        <div class="about-stat-item">
-            <div class="about-stat-num" data-count="500">0</div>
-            <div class="about-stat-lbl">Premium Products</div>
-        </div>
-        <div class="about-stat-item">
-            <div class="about-stat-num" data-count="50">0</div>
-            <div class="about-stat-lbl">Cities Served</div>
         </div>
     </div>
 </section>
@@ -478,12 +443,12 @@ require 'includes/header.php';
         <h2>Crafted with <span>Passion</span>,<br>Built on <span>Trust</span></h2>
 
         <div class="about-pullquote">
-            "Every woman deserves to feel beautiful — not just on special occasions, but every single day."
+            "Every woman deserves to feel beautiful | not just on special occasions, but every single day."
         </div>
 
         <p>Jenny's Cosmetics & Jewelry was born from a simple dream: to bring high-quality, affordable beauty and elegance to every woman in Pakistan. Founded in 2020 by <strong>Jenny</strong>, a passionate makeup artist and jewelry enthusiast, what started as a small home-based venture has blossomed into a trusted national brand.</p>
 
-        <p>We source exclusively from certified, cruelty-free manufacturers and personally test every product before it reaches your hands. Our imitation jewelry is crafted with the precision and care of fine jewelry — because you deserve nothing less.</p>
+        <p>We source exclusively from certified, cruelty-free manufacturers and personally test every product before it reaches your hands. Our imitation jewelry is crafted with the precision and care of fine jewelry | because you deserve nothing less.</p>
 
         <div class="about-story-values">
             <div class="about-val-chip"><i class="fas fa-leaf"></i> Cruelty Free</div>
@@ -507,17 +472,17 @@ require 'includes/header.php';
         <div class="about-mvv-card" data-aos="fade-up" data-aos-delay="0">
             <div class="about-mvv-icon"><i class="fas fa-bullseye"></i></div>
             <h3>Our Mission</h3>
-            <p>To empower every woman to express her unique beauty through premium, affordable cosmetics and jewelry that enhance confidence and self-love — without compromise.</p>
+            <p>To empower every woman to express her unique beauty through premium, affordable cosmetics and jewelry that enhance confidence and self-love | without compromise.</p>
         </div>
         <div class="about-mvv-card" data-aos="fade-up" data-aos-delay="100">
-            <div class="about-mvv-icon"><i class="fas fa-telescope"></i></div>
+            <div class="about-mvv-icon"><i class="fas fa-eye"></i></div>
             <h3>Our Vision</h3>
-            <p>To become Pakistan's most trusted and loved online destination for beauty — known for authenticity, elegance, and an exceptional customer experience at every touchpoint.</p>
+            <p>To become Pakistan's most trusted and loved online destination for beauty | known for authenticity, elegance, and an exceptional customer experience at every touchpoint.</p>
         </div>
         <div class="about-mvv-card" data-aos="fade-up" data-aos-delay="200">
-            <div class="about-mvv-icon"><i class="fas fa-hands-holding-heart"></i></div>
+            <div class="about-mvv-icon"><i class="fas fa-gem"></i></div>
             <h3>Our Values</h3>
-            <p>We stand for <strong style="color:var(--primary-gold)">Quality</strong>, <strong style="color:var(--primary-gold)">Trust</strong>, <strong style="color:var(--primary-gold)">Elegance</strong>, and <strong style="color:var(--primary-gold)">Customer Happiness</strong>. Every product is a promise — a promise of excellence we deliver on every single order.</p>
+            <p>We stand for <strong style="color:var(--primary-gold)">Quality</strong>, <strong style="color:var(--primary-gold)">Trust</strong>, <strong style="color:var(--primary-gold)">Elegance</strong>, and <strong style="color:var(--primary-gold)">Customer Happiness</strong>. Every product is a promise | a promise of excellence we deliver on every single order.</p>
         </div>
     </div>
 </section>
@@ -554,7 +519,7 @@ require 'includes/header.php';
             <div class="tl-content-left">
                 <div class="tl-year">2022</div>
                 <div class="tl-title">Jewelry Line Added</div>
-                <div class="tl-desc">Introduced the Imitation Jewelry collection — premium-quality pieces that look indistinguishable from real gold.</div>
+                <div class="tl-desc">Introduced the Imitation Jewelry collection | premium-quality pieces that look indistinguishable from real gold.</div>
             </div>
             <div class="tl-dot">2022</div>
             <div class="tl-empty"></div>
@@ -583,7 +548,7 @@ require 'includes/header.php';
             <div class="tl-content-right">
                 <div class="tl-year">2026</div>
                 <div class="tl-title">15,000+ Happy Customers</div>
-                <div class="tl-desc">Today we serve 15,000+ loyal customers with 500+ premium products — and we're just getting started.</div>
+                <div class="tl-desc">Today we serve 15,000+ loyal customers with 500+ premium products | and we're just getting started.</div>
             </div>
         </div>
     </div>
@@ -605,7 +570,7 @@ require 'includes/header.php';
             <div class="team-card-body">
                 <div class="team-card-name">Jenny</div>
                 <div class="team-card-role">Founder &amp; CEO</div>
-                <div class="team-card-desc">The visionary heart of Jenny's — a certified makeup artist with a passion for making every woman feel beautiful. She curates every collection personally.</div>
+                <div class="team-card-desc">The visionary heart of Jenny's | a certified makeup artist with a passion for making every woman feel beautiful. She curates every collection personally.</div>
                 <div class="team-card-socials">
                     <a href="https://instagram.com" target="_blank" aria-label="Jenny on Instagram"><i class="fab fa-instagram"></i></a>
                     <a href="https://linkedin.com" target="_blank" aria-label="Jenny on LinkedIn"><i class="fab fa-linkedin-in"></i></a>
@@ -633,7 +598,7 @@ require 'includes/header.php';
             <div class="team-card-body">
                 <div class="team-card-name">Sana</div>
                 <div class="team-card-role">Customer Happiness</div>
-                <div class="team-card-desc">Sana ensures every customer leaves with a smile — handling support, returns, and everything in between. Your satisfaction is her personal mission.</div>
+                <div class="team-card-desc">Sana ensures every customer leaves with a smile | handling support, returns, and everything in between. Your satisfaction is her personal mission.</div>
                 <div class="team-card-socials">
                     <a href="https://instagram.com" target="_blank" aria-label="Sana on Instagram"><i class="fab fa-instagram"></i></a>
                     <a href="https://linkedin.com" target="_blank" aria-label="Sana on LinkedIn"><i class="fab fa-linkedin-in"></i></a>
@@ -664,12 +629,12 @@ require 'includes/header.php';
         <div class="about-trust-card" data-aos="fade-up" data-aos-delay="120">
             <div class="about-trust-icon"><i class="fas fa-truck-fast"></i></div>
             <h4>Fast Nationwide Delivery</h4>
-            <p>Orders are dispatched within 24 hours. Free delivery on all orders over Rs. 1,999 — nationwide.</p>
+            <p>Orders are dispatched within 24 hours. Free delivery on all orders over Rs. 1,999 | nationwide.</p>
         </div>
         <div class="about-trust-card" data-aos="fade-up" data-aos-delay="180">
             <div class="about-trust-icon"><i class="fas fa-rotate-left"></i></div>
             <h4>Easy 7-Day Returns</h4>
-            <p>Not satisfied? We offer a hassle-free 7-day return and exchange policy — no questions asked.</p>
+            <p>Not satisfied? We offer a hassle-free 7-day return and exchange policy | no questions asked.</p>
         </div>
         <div class="about-trust-card" data-aos="fade-up" data-aos-delay="240">
             <div class="about-trust-icon"><i class="fas fa-headset"></i></div>
@@ -690,7 +655,7 @@ require 'includes/header.php';
 <section class="about-cta-section">
     <div class="about-cta-inner" data-aos="fade-up">
         <h2>Ready to <span>Elevate</span> Your Beauty?</h2>
-        <p>Explore our curated collection of premium cosmetics and imitation jewelry — crafted for the modern Pakistani woman.</p>
+        <p>Explore our curated collection of premium cosmetics and imitation jewelry | crafted for the modern Pakistani woman.</p>
         <div class="about-cta-buttons">
             <a href="products.php" class="btn-cta-gold"><i class="fas fa-shopping-bag" style="margin-right:8px;"></i>Shop All Products</a>
             <a href="contact.php" class="btn-cta-outline"><i class="fas fa-envelope" style="margin-right:8px;"></i>Contact Us</a>

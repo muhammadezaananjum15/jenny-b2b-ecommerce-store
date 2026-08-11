@@ -1,4 +1,4 @@
-<?php session_start(); ?>
+<?php if (session_status() === PHP_SESSION_NONE) { session_start(); } ?>
 <?php require 'includes/header.php'; ?>
 <link rel="stylesheet" href="css/style.css">
 <?php require 'includes/navbar.php'; ?>
@@ -71,7 +71,7 @@
         <div class="return-card-icon"><i class="fas fa-rupee-sign"></i></div>
         <div>
             <h3>Refund Process</h3>
-            <p>Once your returned item is received and inspected, the refund will be processed within <strong>3–5 business days</strong> via the original payment method or store credit.</p>
+            <p>Once your returned item is received and inspected, the refund will be processed within <strong>3 to 5 business days</strong> via the original payment method or store credit.</p>
         </div>
     </div>
 
@@ -80,7 +80,7 @@
         <li>Contact us via WhatsApp or email within 7 days of receiving your order.</li>
         <li>Provide your Order ID and photos of the item(s) and packaging.</li>
         <li>Our team will guide you through the return shipping process.</li>
-        <li>Once received, we process your refund or exchange within 3–5 days.</li>
+        <li>Once received, we process your refund or exchange within 3 to 5 days.</li>
     </ol>
 
     <div class="return-not-eligible">
@@ -101,8 +101,8 @@
     <p>For returns due to our error (wrong/defective item), we cover the shipping cost. For returns due to personal preference (e.g., change of mind), the customer is responsible for return shipping charges.</p>
 
     <h2>Contact Us for Returns</h2>
-    <p>📞 Phone/WhatsApp: <strong>+92 300 1234567</strong><br>
-    📧 Email: <a href="mailto:support@jennyscosmetics.com" style="color:var(--primary-gold);">support@jennyscosmetics.com</a></p>
+    <p><i class="fas fa-phone-alt"></i> Phone/WhatsApp: <strong>+92 300 1234567</strong><br>
+    <i class="fas fa-envelope"></i> Email: <a href="mailto:support@jennyscosmetics.com" style="color:var(--primary-gold);">support@jennyscosmetics.com</a></p>
 </div>
 
 <?php require 'includes/footer.php'; ?>

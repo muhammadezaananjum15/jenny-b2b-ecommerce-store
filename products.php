@@ -1,4 +1,4 @@
-<?php session_start(); ?>
+<?php if (session_status() === PHP_SESSION_NONE) { session_start(); } ?>
 
 
 <?php require 'includes/header.php'; ?>
@@ -74,9 +74,8 @@
                 </div>
                 <!-- Price Presets -->
                 <div class="price-presets" style="display:flex; flex-wrap:wrap; gap:6px;">
-                    <button type="button" onclick="setPriceRange(0, 500)" style="font-size:0.72rem; padding:4px 8px; border-radius:12px; border:1px solid #ddd; background:#f9f9f9; cursor:pointer;">Under 500</button>
-                    <button type="button" onclick="setPriceRange(500, 1000)" style="font-size:0.72rem; padding:4px 8px; border-radius:12px; border:1px solid #ddd; background:#f9f9f9; cursor:pointer;">500 - 1000</button>
-                    <button type="button" onclick="setPriceRange(1000, 3000)" style="font-size:0.72rem; padding:4px 8px; border-radius:12px; border:1px solid #ddd; background:#f9f9f9; cursor:pointer;">1000+</button>
+                    <button type="button" onclick="setPriceRange(0, 499)" style="font-size:0.72rem; padding:5px 10px; border-radius:12px; border:1.5px solid var(--primary-gold); background:rgba(244,180,0,0.08); color:var(--dark-black); cursor:pointer; font-weight:600; transition:0.2s;" onmouseover="this.style.background='var(--primary-gold)'" onmouseout="this.style.background='rgba(244,180,0,0.08)'">Under 500</button>
+                    <button type="button" onclick="setPriceRange(500, 1000)" style="font-size:0.72rem; padding:5px 10px; border-radius:12px; border:1.5px solid var(--primary-gold); background:rgba(244,180,0,0.08); color:var(--dark-black); cursor:pointer; font-weight:600; transition:0.2s;" onmouseover="this.style.background='var(--primary-gold)'" onmouseout="this.style.background='rgba(244,180,0,0.08)'">500 to 1000</button>
                 </div>
             </div>
         </div>
@@ -91,7 +90,7 @@
             </ul>
         </div>
 
-        <button class="btn-clear-filters" onclick="clearAllFilters()" style="width:100%; padding:10px; border-radius:20px; background:#f0f0f0; border:1px solid #ddd; font-weight:600; font-size:0.85rem; cursor:pointer; transition:0.3s;">
+        <button class="btn-clear-filters" onclick="clearAllFilters()" style="width:100%; padding:11px; border-radius:20px; background:var(--primary-gold); border:none; font-weight:700; font-size:0.85rem; cursor:pointer; transition:0.3s; color:var(--dark-black); letter-spacing:0.3px;" onmouseover="this.style.background='var(--dark-black);this.style.color=var(--primary-gold)'" onmouseout="this.style.background='var(--primary-gold)';this.style.color='var(--dark-black)'">
             <i class="fas fa-redo-alt" style="margin-right:6px;"></i> Clear All Filters
         </button>
     </div>
@@ -1680,8 +1679,5 @@
 
 <!-- Footer -->
 <?php require 'includes/footer.php'; ?>
-
-<!-- JS LINK -->
-<script src="includes/js/script.js"></script>
 </body>
 </html>
