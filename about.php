@@ -399,9 +399,6 @@ require 'includes/header.php';
 
 <?php require 'includes/navbar.php'; ?>
 
-<!-- ============================================================ -->
-<!-- HERO SECTION -->
-<!-- ============================================================ -->
 <section class="about-hero-premium">
     <div class="about-hero-bg" id="aboutHeroBg"></div>
     <div class="about-hero-gradient"></div>
@@ -419,9 +416,6 @@ require 'includes/header.php';
     </div>
 </section>
 
-<!-- ============================================================ -->
-<!-- BRAND STORY -->
-<!-- ============================================================ -->
 <section style="background:#fff; padding-top:0;">
 <div class="about-story-wrap">
     <!-- Image Column -->
@@ -460,9 +454,6 @@ require 'includes/header.php';
 </div>
 </section>
 
-<!-- ============================================================ -->
-<!-- MISSION / VISION / VALUES -->
-<!-- ============================================================ -->
 <section class="about-mvv-section">
     <div class="about-section-header" data-aos="fade-up">
         <h2>Our <span>Core Pillars</span></h2>
@@ -487,9 +478,6 @@ require 'includes/header.php';
     </div>
 </section>
 
-<!-- ============================================================ -->
-<!-- BRAND TIMELINE -->
-<!-- ============================================================ -->
 <section class="about-timeline-section">
     <div class="about-section-header" data-aos="fade-up">
         <h2>Our <span>Journey</span></h2>
@@ -554,9 +542,6 @@ require 'includes/header.php';
     </div>
 </section>
 
-<!-- ============================================================ -->
-<!-- TEAM SECTION -->
-<!-- ============================================================ -->
 <section class="about-team-section">
     <div class="about-section-header" data-aos="fade-up">
         <h2>Meet Our <span>Team</span></h2>
@@ -608,9 +593,6 @@ require 'includes/header.php';
     </div>
 </section>
 
-<!-- ============================================================ -->
-<!-- WHY CHOOSE US -->
-<!-- ============================================================ -->
 <section class="about-trust-section">
     <div class="about-section-header" data-aos="fade-up">
         <h2>Why Choose <span>Jenny's</span></h2>
@@ -649,9 +631,6 @@ require 'includes/header.php';
     </div>
 </section>
 
-<!-- ============================================================ -->
-<!-- CTA SECTION -->
-<!-- ============================================================ -->
 <section class="about-cta-section">
     <div class="about-cta-inner" data-aos="fade-up">
         <h2>Ready to <span>Elevate</span> Your Beauty?</h2>

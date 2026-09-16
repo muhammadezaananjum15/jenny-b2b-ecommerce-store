@@ -7,9 +7,6 @@
 <?php require 'includes/navbar.php'; ?>
 
 
-<!-- ============================================ -->
-<!-- CART SECTION -->
-<!-- ============================================ -->
 <section class="cart-section">
     <div class="cart-container">
         
@@ -50,9 +47,6 @@
     </div>
 </section>
 
-<!-- ============================================ -->
-<!-- CART SIDEBAR (DRAWER) - REMOVED FROM HERE -->
-<!-- ============================================ -->
 
 <!-- Footer -->
 <?php require 'includes/footer.php'; ?>

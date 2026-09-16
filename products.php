@@ -8,9 +8,6 @@
 
 <?php require 'includes/navbar.php'; ?>
 
-<!-- ============================================ -->
-<!-- HERO BANNER (ALL PRODUCTS) -->
-<!-- ============================================ -->
 <section class="products-hero">
     <div class="products-hero-content">
         <h1>All <span>Products</span></h1>
@@ -21,9 +18,6 @@
     </div>
 </section>
 
-<!-- ============================================ -->
-<!-- CATEGORY SECTION WITH SIDEBAR & ADVANCED FILTERS -->
-<!-- ============================================ -->
 <section class="category-page-wrapper">
     
     <!-- LEFT SIDEBAR (ADVANCED FILTERS) -->
@@ -141,7 +135,6 @@
                 endforeach;
             else:
             ?>
-            <!-- ==================== COSMETICS ==================== -->
             
             <!-- Foundation -->
             <div class="category-card visible" data-name="Foundation" data-id="foundation_1">
@@ -937,7 +930,7 @@
                 </div>
             </div>
 
-            <!-- ==================== JEWELRY ==================== -->
+
             
             <!-- Necklace -->
             <div class="category-card visible" data-name="necklace" data-id="necklace_1">
@@ -1653,9 +1646,6 @@
 
 <?php require 'includes/popup.php'; ?>
 
-<!-- ============================================ -->
-<!-- CART SIDEBAR (DRAWER) -->
-<!-- ============================================ -->
 <div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
 <div class="cart-sidebar" id="cartSidebar">
     <div class="cart-header">

@@ -292,17 +292,8 @@ textarea:focus-visible {
     height: 100%;
 }
 .slide-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(244, 180, 0, 0.15);
-    border: 1px solid rgba(244, 180, 0, 0.35);
-    color: var(--primary-gold);
-    padding: 6px 18px;
-    border-radius: 30px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 2px;
+    display: none !important;
+}
     text-transform: uppercase;
     margin-bottom: 20px;
     backdrop-filter: blur(8px);
@@ -735,7 +726,7 @@ textarea:focus-visible {
 .category-page-wrapper {
     display: flex;
     gap: 30px;
-    padding: 0 5% 60px 5%;
+    padding: 35px 5% 60px 5%;
     align-items: flex-start;
 }
 
@@ -4238,7 +4229,7 @@ textarea:focus-visible {
     .hero { padding: 120px 8%; }
     .categories, .testimonials-section, .contact-section,
     .featured-products, .why-us-section, .insta-feed { padding-left: 8%; padding-right: 8%; }
-    .category-page-wrapper { padding: 0 8% 60px 8%; }
+    .category-page-wrapper { padding: 35px 8% 60px 8%; }
     .category-grid { grid-template-columns: repeat(4, 1fr) !important; }
     .footer-container { max-width: 1400px; }
 }
@@ -5041,48 +5032,52 @@ textarea:focus-visible {
    SHOP BY CATEGORY | FEATURED CATEGORIES
    ============================================================ */
 .featured-categories {
-    padding: 70px 5%;
+    padding: 80px 5%;
     background: var(--light-bg);
 }
 .featured-grid {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
-    gap: 20px;
+    gap: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
 }
 .featured-card {
     background: var(--white);
-    border-radius: var(--radius-md);
+    border-radius: 20px;
     overflow: hidden;
-    box-shadow: var(--shadow-sm);
-    transition: all 0.35s cubic-bezier(0.165, 0.84, 0.44, 1);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    border: 1px solid rgba(244, 180, 0, 0.08);
+    border: 1px solid rgba(244, 180, 0, 0.15);
+    padding-bottom: 20px;
 }
 .featured-card:hover {
-    transform: translateY(-8px);
-    box-shadow: var(--shadow-gold);
-    border-color: rgba(244, 180, 0, 0.3);
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 18px 40px rgba(244, 180, 0, 0.22), 0 8px 20px rgba(0,0,0,0.08);
+    border-color: var(--primary-gold);
 }
 .featured-img-wrapper {
     width: 100%;
     aspect-ratio: 1 / 1;
     overflow: hidden;
     position: relative;
+    border-radius: 18px 18px 0 0;
 }
 .featured-img-wrapper img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.5s ease;
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
 }
-.featured-card:hover .featured-img-wrapper img { transform: scale(1.08); }
+.featured-card:hover .featured-img-wrapper img { transform: scale(1.1); }
 .featured-card-overlay {
     position: absolute;
     inset: 0;
-    background: rgba(15, 15, 15, 0.45);
+    background: rgba(15, 15, 15, 0.4);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -5096,25 +5091,81 @@ textarea:focus-visible {
     letter-spacing: 2px;
     font-size: 0.85rem;
     text-transform: uppercase;
-    border: 1.5px solid rgba(255,255,255,0.6);
-    padding: 6px 18px;
-    border-radius: 20px;
-    backdrop-filter: blur(4px);
+    border: 1.5px solid rgba(255,255,255,0.8);
+    padding: 8px 22px;
+    border-radius: 25px;
+    backdrop-filter: blur(6px);
 }
-.featured-card h4 { font-size: 0.9rem; font-weight: 700; color: var(--dark-black); margin: 12px 8px 4px; }
-.featured-card p  { font-size: 0.75rem; color: var(--text-grey); margin: 0 8px 10px; }
-.featured-btn {
-    display: inline-block;
-    background: var(--primary-gold);
-    color: var(--dark-black);
-    padding: 7px 18px;
-    border-radius: 20px;
-    font-size: 0.78rem;
+.featured-card h4 {
+    font-size: 1.15rem;
     font-weight: 700;
-    margin-bottom: 14px;
-    transition: all 0.25s ease;
+    color: var(--dark-black);
+    margin: 16px 10px 4px;
+    letter-spacing: 0.3px;
+    transition: color 0.3s ease;
 }
-.featured-btn:hover { background: var(--dark-black); color: var(--primary-gold); }
+.featured-card:hover h4 {
+    color: var(--primary-gold);
+}
+.featured-card p {
+    font-size: 0.82rem;
+    color: var(--text-grey);
+    margin: 0 10px 14px;
+    font-weight: 500;
+}
+.featured-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--primary-gold) 0%, #D19C00 100%);
+    color: var(--dark-black);
+    padding: 10px 24px;
+    border-radius: 25px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    margin-top: auto;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 14px rgba(244, 180, 0, 0.3);
+    text-decoration: none;
+}
+.featured-btn:hover {
+    background: var(--dark-black);
+    color: var(--primary-gold);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+}
+
+/* --- Responsive Breakpoints for Featured Categories --- */
+@media (max-width: 1399px) {
+    .featured-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+    }
+}
+@media (max-width: 991px) {
+    .featured-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+}
+@media (max-width: 767px) {
+    .featured-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+    .featured-card h4 { font-size: 1.05rem; }
+    .featured-btn { padding: 9px 20px; font-size: 0.82rem; }
+}
+@media (max-width: 480px) {
+    .featured-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    .featured-card { padding-bottom: 14px; }
+    .featured-card h4 { font-size: 0.95rem; margin: 12px 6px 3px; }
+    .featured-card p { font-size: 0.75rem; margin-bottom: 10px; }
+    .featured-btn { padding: 8px 16px; font-size: 0.78rem; }
+}
 
 /* ============================================================
    STATS COUNTER

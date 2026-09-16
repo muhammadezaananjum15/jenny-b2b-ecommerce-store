@@ -6,9 +6,6 @@
 
 <?php require 'includes/navbar.php'; ?>
 
-<!-- ============================================ -->
-<!-- HERO BANNER (JEWELRY) -->
-<!-- ============================================ -->
 <section class="jewelry-hero">
     <div class="jewelry-hero-content">
         <h1>Premium <span>Jewelry</span> Collection</h1>
@@ -20,9 +17,6 @@
     </div>
 </section>
 
-<!-- ============================================ -->
-<!-- CATEGORY SECTION WITH SIDEBAR & SEARCH -->
-<!-- ============================================ -->
 <section class="category-page-wrapper">
     
     <!-- LEFT SIDEBAR (SIRF JEWELRY) -->
@@ -804,9 +798,6 @@
     </div>
 </section>
 
-<!-- ============================================ -->
-<!-- PROMO BANNER (BUY 2 GET 1 FREE ON JEWELRY) -->
-<!-- ============================================ -->
 <section class="jewelry-promo">
     <div class="jewelry-promo-content">
         <span class="promo-tag">Limited Time Offer</span>
@@ -816,9 +807,6 @@
     </div>
 </section>
 
-<!-- ============================================ -->
-<!-- WHY CHOOSE US -->
-<!-- ============================================ -->
 <section class="why-choose-us">
     <h2 class="section-title" style="text-align: center;">Why <span style="color: var(--primary-gold);">Choose Us</span></h2>
     <div class="why-grid">
@@ -846,9 +834,6 @@
 </section>
 
 <?php require 'includes/popup.php'; ?>
-<!-- ============================================ -->
-<!-- CART SIDEBAR (DRAWER) -->
-<!-- ============================================ -->
 <div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
 <div class="cart-sidebar" id="cartSidebar">
     <div class="cart-header">

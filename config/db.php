@@ -54,6 +54,7 @@ try {
 
         // 5b. Auto-migrate B2B + brand + profile columns (idempotent)
         $migrations = [
+            "UPDATE `hero_slides` SET `badge_text` = TRIM(REPLACE(`badge_text`, 'DEMO', '')) WHERE `badge_text` LIKE '%DEMO%'",
             // Products
             "ALTER TABLE `products` ADD COLUMN IF NOT EXISTS `brand` varchar(100) DEFAULT 'Jenny Luxe'",
             // User B2B fields

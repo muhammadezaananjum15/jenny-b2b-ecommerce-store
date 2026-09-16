@@ -6,9 +6,6 @@
 
 <?php require 'includes/navbar.php'; ?>
 
-<!-- ============================================ -->
-<!-- HERO BANNER (OFFERS) -->
-<!-- ============================================ -->
 <section class="offers-hero">
     <div class="offers-hero-content" data-aos="fade-left">
         <h1>Special <span>Offers</span></h1>
@@ -20,9 +17,6 @@
     </div>
 </section>
 
-<!-- ============================================ -->
-<!-- CATEGORY SECTION WITH SIDEBAR & SEARCH -->
-<!-- ============================================ -->
 <section class="category-page-wrapper">
     
     <!-- LEFT SIDEBAR (ALL CATEGORIES) -->
@@ -299,9 +293,6 @@
 
 <?php require 'includes/popup.php'; ?>
 
-<!-- ============================================ -->
-<!-- CART SIDEBAR (DRAWER) -->
-<!-- ============================================ -->
 <div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
 <div class="cart-sidebar" id="cartSidebar">
     <div class="cart-header">

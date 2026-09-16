@@ -55,27 +55,21 @@ if (!function_exists('renderSingleProductCard')) {
         ?>
         <div class="category-card visible" data-name="<?= $cat ?> <?= $subcat ?> <?= $name ?>" data-price="<?= $price ?>" data-rating="<?= $rating ?>" data-id="<?= $id ?>">
             <div class="card-img-wrapper" style="position:relative; overflow:hidden;">
-                <img src="<?= $imgPath ?>" alt="<?= $name ?>" loading="lazy" onclick="openProductPopup(<?= json_encode($name) ?>, <?= $price ?>, <?= json_encode($imgPath) ?>, <?= json_encode($desc) ?>)" style="cursor:pointer; width:100%; height:100%; object-fit:cover; transition:transform 0.5s ease;">
+                <img src="<?= $imgPath ?>" alt="<?= $name ?>" loading="lazy" onclick="openProductPopup(<?= htmlspecialchars(json_encode($name), ENT_QUOTES, 'UTF-8') ?>, <?= $price ?>, <?= htmlspecialchars(json_encode($imgPath), ENT_QUOTES, 'UTF-8') ?>, <?= htmlspecialchars(json_encode($desc), ENT_QUOTES, 'UTF-8') ?>)" style="cursor:pointer; width:100%; height:100%; object-fit:cover; transition:transform 0.5s ease;">
                 
-                <!-- BADGES -->
-                <div class="card-badges" style="position:absolute; top:10px; left:10px; display:flex; flex-direction:column; align-items:flex-start; gap:4px; z-index:2; pointer-events:none; width:auto; max-width:max-content;">
-                    <?php if ($discount > 0): ?>
-                        <span class="offer-badge" style="background:linear-gradient(135deg,#e74c3c,#c0392b); color:#fff; font-size:0.68rem; font-weight:700; padding:3px 10px; border-radius:14px; box-shadow:0 2px 8px rgba(0,0,0,0.2); width:auto; max-width:max-content; display:inline-flex; align-self:flex-start;">-<?= $discount ?>% OFF</span>
-                    <?php endif; ?>
-                    <?php if (!empty($p['is_new'])): ?>
-                        <span style="background:linear-gradient(135deg,#2ecc71,#27ae60); color:#fff; font-size:0.68rem; font-weight:700; padding:3px 10px; border-radius:14px; width:auto; max-width:max-content; display:inline-flex; align-self:flex-start;">NEW</span>
-                    <?php endif; ?>
-                    <?php if (!empty($p['is_bestseller'])): ?>
-                        <span style="background:linear-gradient(135deg,#F4B400,#d19c00); color:#111; font-size:0.68rem; font-weight:700; padding:3px 10px; border-radius:14px; width:auto; max-width:max-content; display:inline-flex; align-self:flex-start;">BESTSELLER</span>
-                    <?php endif; ?>
+                <!-- BADGES (Sleek single discount tag if applicable) -->
+                <?php if ($discount > 0): ?>
+                <div class="card-badges" style="position:absolute; top:10px; left:10px; z-index:2; pointer-events:none;">
+                    <span style="background:rgba(0,0,0,0.75); color:var(--primary-gold); font-size:0.65rem; font-weight:700; padding:4px 10px; border-radius:20px; border:1px solid var(--primary-gold); letter-spacing:0.5px; text-transform:uppercase;">-<?= $discount ?>%</span>
                 </div>
+                <?php endif; ?>
 
                 <!-- QUICK ACTIONS OVERLAY -->
                 <div class="card-quick-actions" style="position:absolute; top:10px; right:10px; display:flex; flex-direction:column; gap:6px; z-index:2;">
-                    <button type="button" class="btn-wishlist" onclick="toggleWishlist(this, <?= json_encode($name) ?>)" aria-label="Add to Wishlist" style="width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,0.9); border:none; color:#e74c3c; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(0,0,0,0.15); transition:0.3s;">
+                    <button type="button" class="btn-wishlist" onclick="toggleWishlist(this, <?= htmlspecialchars(json_encode($name), ENT_QUOTES, 'UTF-8') ?>)" aria-label="Add to Wishlist" style="width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,0.9); border:none; color:#e74c3c; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(0,0,0,0.15); transition:0.3s;">
                         <i class="far fa-heart"></i>
                     </button>
-                    <button type="button" class="btn-quickview" onclick="openProductPopup(<?= json_encode($name) ?>, <?= $price ?>, <?= json_encode($imgPath) ?>, <?= json_encode($desc) ?>)" aria-label="Quick View" style="width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,0.9); border:none; color:var(--dark-black); cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(0,0,0,0.15); transition:0.3s;">
+                    <button type="button" class="btn-quickview" onclick="openProductPopup(<?= htmlspecialchars(json_encode($name), ENT_QUOTES, 'UTF-8') ?>, <?= $price ?>, <?= htmlspecialchars(json_encode($imgPath), ENT_QUOTES, 'UTF-8') ?>, <?= htmlspecialchars(json_encode($desc), ENT_QUOTES, 'UTF-8') ?>)" aria-label="Quick View" style="width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,0.9); border:none; color:var(--dark-black); cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(0,0,0,0.15); transition:0.3s;">
                         <i class="fas fa-eye"></i>
                     </button>
                 </div>
@@ -121,8 +115,8 @@ if (!function_exists('renderSingleProductCard')) {
 
                 <!-- ACTIONS -->
                 <div class="card-actions" style="display:flex; gap:8px;">
-                    <button class="btn-add-cart" onclick="addToCartFromCard(this, <?= json_encode($name) ?>, <?= $price ?>, <?= json_encode($imgPath) ?>)" style="flex:1; padding:10px; border-radius:20px; font-weight:600; font-size:0.82rem; cursor:pointer;">Add to Cart</button>
-                    <button class="btn-buy-now" onclick="buyNowFromCard(this, <?= json_encode($name) ?>, <?= $price ?>, <?= json_encode($imgPath) ?>)" style="flex:1; padding:10px; border-radius:20px; font-weight:600; font-size:0.82rem; cursor:pointer;">Buy Now</button>
+                    <button class="btn-add-cart" onclick="addToCartFromCard(this, <?= htmlspecialchars(json_encode($name), ENT_QUOTES, 'UTF-8') ?>, <?= $price ?>, <?= htmlspecialchars(json_encode($imgPath), ENT_QUOTES, 'UTF-8') ?>)" style="flex:1; padding:10px; border-radius:20px; font-weight:600; font-size:0.82rem; cursor:pointer;">Add to Cart</button>
+                    <button class="btn-buy-now" onclick="buyNowFromCard(this, <?= htmlspecialchars(json_encode($name), ENT_QUOTES, 'UTF-8') ?>, <?= $price ?>, <?= htmlspecialchars(json_encode($imgPath), ENT_QUOTES, 'UTF-8') ?>)" style="flex:1; padding:10px; border-radius:20px; font-weight:600; font-size:0.82rem; cursor:pointer;">Buy Now</button>
                 </div>
             </div>
         </div>

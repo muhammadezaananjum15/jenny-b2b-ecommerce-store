@@ -11,14 +11,14 @@ let cart = JSON.parse(localStorage.getItem('jennyCart')) || [];
 
 // --- 2. ADD TO CART FUNCTION (Standard) ---
 function addToCart(name, price, image, id) {
-    // Generate unique ID if not provided
     if (!id) id = name + '_' + Date.now();
+    const numPrice = typeof price === 'number' ? price : parseFloat(price.toString().replace(/[^0-9.]/g, '')) || 0;
     
-    const existingItem = cart.find(item => item.id === id);
+    const existingItem = cart.find(item => item.id === id || item.name === name);
     if (existingItem) {
         existingItem.quantity += 1;
     } else {
-        cart.push({ id: id, name: name, price: price, image: image, quantity: 1 });
+        cart.push({ id: id, name: name, price: numPrice, image: image, quantity: 1 });
     }
     localStorage.setItem('jennyCart', JSON.stringify(cart));
     updateCartUI();
@@ -149,21 +149,31 @@ function openProductPopup(name, price, image, description) {
     popupProduct.image = image;
     popupProduct.qty = 1;
 
-    document.getElementById('popupProductName').innerText = name;
-    document.getElementById('popupProductPrice').innerText = 'Rs. ' + price;
-    document.getElementById('popupProductImage').src = image;
-    document.getElementById('popupProductDesc').innerText = description || 'A premium quality product for your daily routine.';
-    document.getElementById('popupQty').innerText = 1;
+    const nameEl = document.getElementById('popupProductName');
+    const priceEl = document.getElementById('popupProductPrice');
+    const imgEl = document.getElementById('popupProductImage');
+    const descEl = document.getElementById('popupProductDesc');
+    const qtyEl = document.getElementById('popupQty');
+    const overlay = document.getElementById('productPopupOverlay');
+    const modal = document.getElementById('productPopupModal');
 
-    document.getElementById('productPopupOverlay').classList.add('active');
-    document.getElementById('productPopupModal').classList.add('active');
+    if (nameEl) nameEl.innerText = name;
+    if (priceEl) priceEl.innerText = 'Rs. ' + price;
+    if (imgEl) imgEl.src = image;
+    if (descEl) descEl.innerText = description || 'A premium quality product for your daily routine.';
+    if (qtyEl) qtyEl.innerText = 1;
+
+    if (overlay) overlay.classList.add('active');
+    if (modal) modal.classList.add('active');
     document.body.style.overflow = 'hidden';
 }
 
 // --- 9. CLOSE POPUP ---
 function closeProductPopup() {
-    document.getElementById('productPopupOverlay').classList.remove('active');
-    document.getElementById('productPopupModal').classList.remove('active');
+    const overlay = document.getElementById('productPopupOverlay');
+    const modal = document.getElementById('productPopupModal');
+    if (overlay) overlay.classList.remove('active');
+    if (modal) modal.classList.remove('active');
     document.body.style.overflow = 'auto';
 }
 
@@ -182,17 +192,19 @@ function addToCartFromPopup() {
     const price = popupProduct.price;
     const image = popupProduct.image;
     const qty = popupProduct.qty;
-    const id = name + '_' + Date.now();
+    const numPrice = typeof price === 'number' ? price : parseFloat(price.toString().replace(/[^0-9.]/g, '')) || 0;
+    const itemId = name + '_' + image;
 
-    const existingItem = cart.find(item => item.id === id);
+    const existingItem = cart.find(item => item.id === itemId || (item.name === name && item.image === image));
     if (existingItem) {
         existingItem.quantity += qty;
     } else {
-        cart.push({ id: id, name: name, price: price, image: image, quantity: qty });
+        cart.push({ id: itemId, name: name, price: numPrice, image: image, quantity: qty });
     }
     localStorage.setItem('jennyCart', JSON.stringify(cart));
     updateCartUI();
     closeProductPopup();
+    openCart();
     showNotification(`${qty} x ${name} added to cart!`);
     
     if (document.getElementById('cartItemsWrapper')) {
@@ -217,22 +229,22 @@ function changeCardQty(btn, change) {
 
 // --- 13. ADD TO CART FROM CARD ---
 function addToCartFromCard(btn, name, price, image, id) {
-    // Generate unique ID if not provided
-    if (!id) id = name + '_' + Date.now() + '_' + Math.random();
+    const card = btn ? btn.closest('.category-card') : null;
+    const cardId = id || (card ? card.getAttribute('data-id') : null) || (name + '_' + image);
+    const qtySpan = card ? card.querySelector('.card-qty-box span') : null;
+    const qty = qtySpan ? (parseInt(qtySpan.innerText) || 1) : 1;
+    const numPrice = typeof price === 'number' ? price : parseFloat(price.toString().replace(/[^0-9.]/g, '')) || 0;
     
-    const card = btn.closest('.category-card');
-    const qtySpan = card.querySelector('.card-qty-box span');
-    const qty = parseInt(qtySpan.innerText);
-    
-    const existingItem = cart.find(item => item.id === id);
+    const existingItem = cart.find(item => item.id === cardId || (item.name === name && item.image === image));
     if (existingItem) {
         existingItem.quantity += qty;
     } else {
-        cart.push({ id: id, name: name, price: price, image: image, quantity: qty });
+        cart.push({ id: cardId, name: name, price: numPrice, image: image, quantity: qty });
     }
     localStorage.setItem('jennyCart', JSON.stringify(cart));
-    qtySpan.innerText = 1;
+    if (qtySpan) qtySpan.innerText = 1;
     updateCartUI();
+    openCart();
     showNotification(`${qty} x ${name} added to cart!`);
     
     if (document.getElementById('cartItemsWrapper')) {
@@ -944,21 +956,28 @@ document.addEventListener('click', function(e) {
 
 
 // ============================================= //
-// --- BUY NOW FROM CARD (WITHOUT CLEARING CART) --- //
+// --- BUY NOW FROM CARD --- //
 // ============================================= //
 
-function buyNowFromCard(btn, name, price, image) {
-    // Generate unique ID (taaki cart mein alag dikhe)
-    const id = name + '_' + Date.now();
-    // Save to localStorage
+function buyNowFromCard(btn, name, price, image, id) {
+    const card = btn ? btn.closest('.category-card') : null;
+    const cardId = id || (card ? card.getAttribute('data-id') : null) || (name + '_' + image);
+    const qtySpan = card ? card.querySelector('.card-qty-box span') : null;
+    const qty = qtySpan ? (parseInt(qtySpan.innerText) || 1) : 1;
+    const numPrice = typeof price === 'number' ? price : parseFloat(price.toString().replace(/[^0-9.]/g, '')) || 0;
+
+    const existingItem = cart.find(item => item.id === cardId || (item.name === name && item.image === image));
+    if (existingItem) {
+        existingItem.quantity += qty;
+    } else {
+        cart.push({ id: cardId, name: name, price: numPrice, image: image, quantity: qty });
+    }
     localStorage.setItem('jennyCart', JSON.stringify(cart));
-    updateCartUI(); // Update badge
-    
-    // Show notification
+    updateCartUI();
     showNotification('Redirecting to checkout...');
-    
-    // Redirect directly to checkout
-    window.location.href = 'checkout.php';
+    setTimeout(() => {
+        window.location.href = 'checkout.php';
+    }, 200);
 }
 
 // ============================================= //

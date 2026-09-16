@@ -214,34 +214,7 @@
 </style>
 
 <!-- PRODUCT QUICK VIEW PREVIEW MODAL -->
-<div class="product-popup-overlay" id="productPopupOverlay" onclick="closeProductPopup()"></div>
-<div class="product-popup-modal" id="productPopupModal">
-    <button class="popup-close" onclick="closeProductPopup()"><i class="fas fa-times"></i></button>
-    <div class="popup-content">
-        <div class="popup-image">
-            <img id="popupProductImage" src="img/foundation.jpg" alt="Product Image">
-        </div>
-        <div class="popup-details">
-            <h2 id="popupProductName">Product Name</h2>
-            <div class="popup-price" id="popupProductPrice">Rs. 0</div>
-            <div class="popup-description">
-                <h4>Description</h4>
-                <p id="popupProductDesc">Product description will appear here.</p>
-            </div>
-            <div class="popup-qty">
-                <label>Quantity:</label>
-                <div class="qty-box">
-                    <button type="button" onclick="changePopupQty(-1)">-</button>
-                    <span id="popupQty">1</span>
-                    <button type="button" onclick="changePopupQty(1)">+</button>
-                </div>
-            </div>
-            <button class="btn-primary" style="width:100%;padding:14px;border-radius:30px;font-size:1rem;font-weight:600;" onclick="addToCartFromPopup()">
-                <i class="fas fa-shopping-bag"></i> Add to Cart
-            </button>
-        </div>
-    </div>
-</div>
+<?php require_once __DIR__ . '/popup.php'; ?>
 
 <!-- AOS JS -->
 <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>

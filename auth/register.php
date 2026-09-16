@@ -4,8 +4,11 @@ session_start();
 require_once '../config/db.php';
 require_once 'session.php';
 
+$redirect = trim($_GET['redirect'] ?? $_POST['redirect'] ?? '');
+$target   = (!empty($redirect) && strpos($redirect, '..') === false) ? "../" . ltrim($redirect, '/') : "../index.php";
+
 if (isLoggedIn()) {
-    header(isAdmin() ? "Location: ../admin/index.php" : "Location: ../index.php");
+    header(isAdmin() ? "Location: ../admin/index.php" : "Location: $target");
     exit();
 }
 
@@ -100,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_SESSION['email']    = $email;
                     $_SESSION['role']     = 'customer';
 
-                    header("Location: ../index.php");
+                    header("Location: $target");
                     exit();
                 }
             } catch (PDOException $e) {
@@ -113,7 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_SESSION['username'] = $username;
                     $_SESSION['email']    = $email;
                     $_SESSION['role']     = 'customer';
-                    header("Location: ../index.php"); exit();
+                    header("Location: $target"); exit();
                 } catch (PDOException $ex) {
                     $error = 'Registration failed. Please try again.';
                 }
@@ -251,12 +254,15 @@ a { text-decoration: none; color: inherit; }
 
 /* ── FORM PANEL ── */
 .auth-form-panel {
-    width: 520px; min-width: 520px;
+    width: 550px;
+    max-width: 100vw;
+    flex: 0 0 auto;
     background: var(--surface);
     display: flex; flex-direction: column;
     justify-content: center;
-    padding: 48px 48px;
+    padding: 44px 36px;
     overflow-y: auto;
+    box-sizing: border-box;
 }
 
 /* ── ACCOUNT TYPE TOGGLE ── */
@@ -355,7 +361,8 @@ a { text-decoration: none; color: inherit; }
 .form-grid-2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0 16px;
+    gap: 0 14px;
+    align-items: start;
 }
 
 .form-group { margin-bottom: 18px; }
@@ -368,7 +375,7 @@ a { text-decoration: none; color: inherit; }
 }
 .form-label .req { color: var(--gold); }
 
-.input-wrap { position: relative; }
+.input-wrap { position: relative; width: 100%; }
 
 .input-icon {
     position: absolute; left: 16px; top: 50%;
@@ -379,7 +386,7 @@ a { text-decoration: none; color: inherit; }
 
 .form-input {
     width: 100%;
-    padding: 13px 16px 13px 44px;
+    padding: 13px 44px 13px 44px;
     background: var(--surface2);
     border: 1.5px solid var(--border);
     border-radius: var(--radius-sm);
@@ -388,6 +395,17 @@ a { text-decoration: none; color: inherit; }
     font-family: 'Poppins', sans-serif;
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    box-sizing: border-box;
+}
+
+.form-input[type="date"] {
+    color-scheme: dark;
+    cursor: pointer;
+}
+.form-input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    filter: invert(0.8) sepia(1) saturate(5) hue-rotate(5deg);
+    opacity: 0.85;
 }
 .form-input::placeholder { color: var(--text-dim); }
 .form-input:focus {
@@ -402,12 +420,13 @@ a { text-decoration: none; color: inherit; }
 .form-input.input-error ~ .field-error-msg { display: block; }
 
 .pass-toggle {
-    position: absolute; right: 14px; top: 50%;
+    position: absolute; right: 12px; top: 50%;
     transform: translateY(-50%);
     background: none; border: none;
     color: var(--text-dim); cursor: pointer;
-    padding: 4px; border-radius: 4px; line-height: 1;
+    padding: 4px 6px; border-radius: 4px; line-height: 1;
     transition: color 0.2s;
+    z-index: 2;
 }
 .pass-toggle:hover { color: var(--gold); }
 
@@ -530,17 +549,17 @@ a { text-decoration: none; color: inherit; }
 }
 
 /* ── RESPONSIVE ── */
-@media (max-width: 1100px) {
-    .auth-form-panel { width: 480px; min-width: 480px; }
+@media (max-width: 1200px) {
+    .auth-form-panel { width: 480px; max-width: 100vw; padding: 36px 28px; }
 }
 @media (max-width: 768px) {
     body { flex-direction: column; }
     .auth-hero { display: none; }
-    .auth-form-panel { width: 100%; min-width: 100%; padding: 48px 24px; justify-content: flex-start; padding-top: 56px; }
+    .auth-form-panel { width: 100%; min-width: 100%; padding: 36px 20px; justify-content: flex-start; padding-top: 48px; }
     .form-grid-2 { grid-template-columns: 1fr; gap: 0; }
 }
 @media (max-width: 360px) {
-    .auth-form-panel { padding: 40px 16px; }
+    .auth-form-panel { padding: 32px 14px; }
     .social-btns { flex-direction: column; }
 }
 </style>
@@ -585,7 +604,7 @@ a { text-decoration: none; color: inherit; }
 <div class="auth-form-panel">
     <p class="form-eyebrow">Get started</p>
     <h2 class="form-title">Create Your Account</h2>
-    <p class="form-subtitle">Already have an account? <a href="login.php">Sign in here &rarr;</a></p>
+    <p class="form-subtitle">Already have an account? <a href="login.php<?= !empty($redirect) ? '?redirect='.urlencode($redirect) : '' ?>">Sign in here &rarr;</a></p>
 
     <!-- ACCOUNT TYPE TABS -->
     <div class="account-type-tabs" role="tablist" aria-label="Account type">
@@ -616,8 +635,9 @@ a { text-decoration: none; color: inherit; }
     </div>
     <?php endif; ?>
 
-    <form id="registerForm" method="POST" action="register.php" novalidate>
+    <form id="registerForm" method="POST" action="register.php<?= !empty($redirect) ? '?redirect='.urlencode($redirect) : '' ?>" novalidate>
         <input type="hidden" name="account_type" id="accountTypeInput" value="<?= $prefillType === 'b2b' ? 'b2b' : 'retail' ?>">
+        <input type="hidden" name="redirect" value="<?= htmlspecialchars($redirect) ?>">
 
         <div class="form-grid-2">
             <div class="form-group">
@@ -677,9 +697,9 @@ a { text-decoration: none; color: inherit; }
         </div>
 
         <!-- ── DATE OF BIRTH & AGE GATE (MUST BE 16+) ── -->
-        <div class="form-group dob-luxury-card" id="dobGroup" style="background: rgba(244,180,0,0.05); border: 1.5px solid rgba(244,180,0,0.3); padding: 18px 20px; border-radius: 16px; margin-bottom: 24px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
-                <label class="form-label" for="birthdate" style="margin-bottom:0; font-weight:700; color:var(--dark-black);">
+        <div class="form-group dob-luxury-card" id="dobGroup" style="background: rgba(255,171,0,0.06); border: 1.5px solid rgba(255,171,0,0.3); padding: 18px 20px; border-radius: 16px; margin-bottom: 24px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px; flex-wrap:wrap; gap:8px;">
+                <label class="form-label" for="birthdate" style="margin-bottom:0; font-weight:700; color:var(--text-primary);">
                     Date of Birth <span class="req">*</span>
                 </label>
                 <span style="font-size:0.72rem; background: linear-gradient(135deg, var(--gold), #c49000); color:#111; padding:3px 10px; border-radius:20px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px;">
@@ -696,7 +716,7 @@ a { text-decoration: none; color: inherit; }
                 <span class="field-error-msg" id="ageErrorMsg" style="font-weight:700;">You must be at least 16 years old to register.</span>
             </div>
             <div id="ageDisplay" style="font-size:0.82rem; color:#27ae60; margin-top:8px; font-weight:700; display:none;"></div>
-            <div style="font-size:0.74rem; color:#888; margin-top:6px;">You must be at least 16 years of age to register an account with Jenny's Store.</div>
+            <div style="font-size:0.74rem; color:var(--text-muted); margin-top:6px;">You must be at least 16 years of age to register an account with Jenny's Store.</div>
         </div>
 
         <!-- ── B2B SECTION ── -->

@@ -1,5 +1,15 @@
 <?php 
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
+require_once 'config/db.php';
+
+$loggedInUser = null;
+if (isset($_SESSION['user_id']) && isset($pdo) && $pdo) {
+    try {
+        $uStmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
+        $uStmt->execute([$_SESSION['user_id']]);
+        $loggedInUser = $uStmt->fetch();
+    } catch (Exception $e) {}
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -238,23 +248,24 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
     .payment-options {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 14px;
+        gap: 12px;
         margin-bottom: 24px;
         width: 100%;
     }
     .payment-option {
         border: 1.5px solid #E2DBD0;
         border-radius: 14px;
-        padding: 14px 14px;
+        padding: 14px 12px;
         cursor: pointer;
         transition: all 0.3s ease;
         background: #FAF8F5;
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         gap: 10px;
         width: 100%;
         box-sizing: border-box;
         overflow: hidden;
+        min-width: 0;
     }
     .payment-option:hover {
         border-color: #D4AF37;
@@ -266,29 +277,72 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
         background: linear-gradient(135deg, #FFFDF7 0%, #FFF8E7 100%);
         box-shadow: 0 6px 20px rgba(212,175,55,0.18);
     }
-    .payment-option input[type="radio"] { accent-color: #D4AF37; width: 16px; height: 16px; flex-shrink: 0; }
-    
+    .payment-option input[type="radio"] { accent-color: #D4AF37; width: 16px; height: 16px; flex-shrink: 0; margin-top: 3px; }
+
     .payment-method-icon {
-        width: 38px; height: 38px;
+        width: 36px; height: 36px;
         border-radius: 10px;
         background: linear-gradient(135deg, #D4AF37 0%, #AA7C11 100%);
         display: flex; align-items: center; justify-content: center;
-        font-size: 1.05rem; flex-shrink: 0; color: #FFFFFF;
+        font-size: 1rem; flex-shrink: 0; color: #FFFFFF;
         box-shadow: 0 3px 10px rgba(212,175,55,0.25);
+    }
+    .payment-option > div:last-child {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        flex: 1;
+        overflow: hidden;
     }
     .pm-title {
         font-weight: 700;
         color: #111;
         font-size: 0.84rem;
         display: block;
-        line-height: 1.2;
+        line-height: 1.3;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
     .pm-subtitle {
         font-size: 0.7rem;
         color: #777;
         margin-top: 2px;
-        line-height: 1.2;
+        line-height: 1.3;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
+
+    /* WHATSAPP PAYMENT NOTICE */
+    .whatsapp-payment-notice {
+        display: none;
+        align-items: flex-start;
+        gap: 14px;
+        background: linear-gradient(135deg, #e7fbe9, #d4f5d8);
+        border: 1.5px solid #4CAF50;
+        border-radius: 14px;
+        padding: 16px 18px;
+        margin-top: 16px;
+        animation: checkoutFadeIn 0.3s ease;
+    }
+    .whatsapp-payment-notice.visible { display: flex; }
+    .whatsapp-notice-icon {
+        width: 40px; height: 40px; border-radius: 50%;
+        background: #25D366;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.2rem; color: #fff; flex-shrink: 0;
+    }
+    .whatsapp-notice-text { flex: 1; }
+    .whatsapp-notice-text strong { font-size: 0.9rem; color: #155724; display: block; margin-bottom: 4px; }
+    .whatsapp-notice-text p { font-size: 0.8rem; color: #276a30; margin: 0; line-height: 1.5; }
+    .btn-whatsapp {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: #25D366; color: #fff;
+        padding: 8px 16px; border-radius: 20px; font-size: 0.78rem; font-weight: 700;
+        text-decoration: none; margin-top: 8px; transition: 0.2s;
+    }
+    .btn-whatsapp:hover { background: #1ebe5e; color: #fff; }
 
     /* PAYMENT DETAILS */
     .payment-details-wrapper { margin-top: 16px; width: 100%; }
@@ -434,9 +488,6 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
 <link rel="stylesheet" href="css/style.css">
 <?php require 'includes/navbar.php'; ?>
 
-<!-- ============================================ -->
-<!-- PREMIUM CHECKOUT CONTAINER -->
-<!-- ============================================ -->
 <section class="checkout-wrapper">
 
     <h1 class="checkout-page-title">Secure Checkout</h1>
@@ -470,12 +521,29 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
             <div class="checkout-step active" id="step1">
                 <div class="step-section-title"><i class="fas fa-user-check"></i> Delivery & Customer Details</div>
 
+                <?php if ($loggedInUser): ?>
+                    <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:12px; padding:12px 16px; margin-bottom:20px; font-size:0.85rem; color:#166534; display:flex; align-items:center; gap:10px;">
+                        <i class="fas fa-user-check" style="font-size:1.1rem; color:#22c55e;"></i>
+                        <div>
+                            Logged in as <strong><?= htmlspecialchars($loggedInUser['full_name'] ?: $loggedInUser['username']) ?></strong> (<?= htmlspecialchars($loggedInUser['email']) ?>). Your details have been auto-filled.
+                        </div>
+                    </div>
+                <?php else: ?>
+                    <div style="background:#fffdf7; border:1px solid #f5ead4; border-radius:12px; padding:12px 16px; margin-bottom:20px; font-size:0.85rem; color:#7a5c00; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <i class="fas fa-lightbulb" style="color:#d4af37;"></i>
+                            <span>Already have an account? Sign in for faster checkout.</span>
+                        </div>
+                        <a href="auth/login.php?redirect=checkout.php" style="background:#d4af37; color:#111; padding:5px 14px; border-radius:20px; font-weight:700; font-size:0.78rem; text-decoration:none;">Sign In Now</a>
+                    </div>
+                <?php endif; ?>
+
                 <div class="form-row">
                     <div class="form-group">
                         <label>Full Name <span class="req">*</span></label>
                         <div class="input-field-wrap">
                             <i class="fas fa-user field-icon"></i>
-                            <input type="text" id="fullName" placeholder="e.g. Ayesha Khan" required>
+                            <input type="text" id="fullName" placeholder="e.g. Ayesha Khan" value="<?= htmlspecialchars($loggedInUser['full_name'] ?? $_SESSION['username'] ?? '') ?>" required>
                         </div>
                         <div class="error-message" id="fullNameError">Full name is required</div>
                     </div>
@@ -483,7 +551,7 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
                         <label>Phone Number <span class="req">*</span></label>
                         <div class="input-field-wrap">
                             <i class="fas fa-phone field-icon"></i>
-                            <input type="tel" id="phone" placeholder="+92 300 1234567" required>
+                            <input type="tel" id="phone" placeholder="+92 300 1234567" value="<?= htmlspecialchars($loggedInUser['phone'] ?? '') ?>" required>
                         </div>
                         <div class="error-message" id="phoneError">Valid phone number required</div>
                     </div>
@@ -494,7 +562,7 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
                         <label>Email Address <span class="req">*</span></label>
                         <div class="input-field-wrap">
                             <i class="fas fa-envelope field-icon"></i>
-                            <input type="email" id="email" placeholder="ayesha@example.com" required>
+                            <input type="email" id="email" placeholder="ayesha@example.com" value="<?= htmlspecialchars($loggedInUser['email'] ?? $_SESSION['email'] ?? '') ?>" required>
                         </div>
                         <div class="error-message" id="emailError">Valid email required</div>
                     </div>
@@ -503,7 +571,7 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
                         <label>Date of Birth <span class="req">*</span> <span style="font-size:0.72rem; color:#D4AF37; font-weight:700;">(Must be 16+)</span></label>
                         <div class="input-field-wrap">
                             <i class="fas fa-calendar-alt field-icon"></i>
-                            <input type="date" id="checkoutDob" required oninput="validateCheckoutAge(this)">
+                            <input type="date" id="checkoutDob" value="<?= htmlspecialchars($loggedInUser['birthdate'] ?? $loggedInUser['dob'] ?? '') ?>" required oninput="validateCheckoutAge(this)">
                         </div>
                         <div class="error-message" id="dobError">You must be at least 16 years old to order.</div>
                         <div id="checkoutAgeBadge" style="font-size:0.75rem; color:#27AE60; margin-top:4px; font-weight:700; display:none;"></div>
@@ -512,7 +580,7 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
 
                 <div class="form-group">
                     <label>Full Delivery Address <span class="req">*</span></label>
-                    <textarea id="address" rows="3" placeholder="House No. 12, Block 5, Gulshan-e-Iqbal, Karachi" required></textarea>
+                    <textarea id="address" rows="3" placeholder="House No. 12, Block 5, Gulshan-e-Iqbal, Karachi" required><?= htmlspecialchars($loggedInUser['address'] ?? '') ?></textarea>
                     <div class="error-message" id="addressError">Delivery address is required</div>
                 </div>
 
@@ -521,7 +589,7 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
                         <label>City <span class="req">*</span></label>
                         <div class="input-field-wrap">
                             <i class="fas fa-city field-icon"></i>
-                            <input type="text" id="city" placeholder="e.g. Karachi" required>
+                            <input type="text" id="city" placeholder="e.g. Karachi" value="<?= htmlspecialchars($loggedInUser['city'] ?? '') ?>" required>
                         </div>
                         <div class="error-message" id="cityError">City is required</div>
                     </div>
@@ -685,6 +753,18 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
                     </div>
                 </div>
 
+                <!-- WHATSAPP PAYMENT NOTICE (hidden for COD, shown for digital payments) -->
+                <div class="whatsapp-payment-notice" id="whatsappNotice">
+                    <div class="whatsapp-notice-icon"><i class="fab fa-whatsapp"></i></div>
+                    <div class="whatsapp-notice-text">
+                        <strong>📸 Send Payment Screenshot on WhatsApp</strong>
+                        <p>After making your payment, please <strong>send a screenshot of the transaction</strong> to our WhatsApp number. We will verify it shortly and confirm your order.</p>
+                        <a href="https://wa.me/923001234567" target="_blank" class="btn-whatsapp">
+                            <i class="fab fa-whatsapp"></i> Send Screenshot — +92 300 1234567
+                        </a>
+                    </div>
+                </div>
+
                 <div class="step-actions">
                     <button type="button" class="btn-outline" onclick="goToStep(1)"><i class="fas fa-arrow-left"></i> Back</button>
                     <button type="button" class="btn-continue" onclick="goToStep(3)">Review Order &nbsp;<i class="fas fa-arrow-right"></i></button>
@@ -833,6 +913,16 @@ function switchPaymentDetails(method) {
     document.querySelectorAll('.payment-details-box').forEach(b => b.classList.remove('active'));
     const box = document.getElementById('details-' + method);
     if (box) box.classList.add('active');
+
+    // Show/hide WhatsApp notice for non-COD payment methods
+    const waNotice = document.getElementById('whatsappNotice');
+    if (waNotice) {
+        if (method === 'cod') {
+            waNotice.classList.remove('visible');
+        } else {
+            waNotice.classList.add('visible');
+        }
+    }
 }
 
 function hideAllErrors() {
@@ -918,26 +1008,54 @@ function validateAndPlaceOrder() {
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>&nbsp; Placing Order...';
 
+    const orderNum = 'JN-' + Date.now().toString(36).toUpperCase();
     const orderData = {
-        name: document.getElementById('fullName').value,
-        phone: document.getElementById('phone').value,
-        email: document.getElementById('email').value,
+        name: document.getElementById('fullName').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        email: document.getElementById('email').value.trim(),
         dob: document.getElementById('checkoutDob').value,
-        address: document.getElementById('address').value,
-        city: document.getElementById('city').value,
+        address: document.getElementById('address').value.trim(),
+        city: document.getElementById('city').value.trim(),
+        zip: document.getElementById('zip').value.trim(),
         delivery: document.querySelector('input[name="deliveryMethod"]:checked')?.value || 'standard',
         payment: document.querySelector('input[name="paymentMethod"]:checked')?.value || 'cod',
         notes: document.getElementById('orderNotes')?.value || '',
         items: cart,
         shipping: shippingCost,
-        total: cart.reduce((s, i) => s + i.price * i.quantity, 0) + shippingCost,
-        orderNum: 'JN-' + Date.now().toString(36).toUpperCase(),
+        total: cart.reduce((s, i) => s + (parseFloat(i.price) || 0) * (parseInt(i.quantity) || 1), 0) + shippingCost,
+        orderNum: orderNum,
         date: new Date().toLocaleDateString('en-PK', { day:'numeric', month:'long', year:'numeric' })
     };
-    localStorage.setItem('jennyLastOrder', JSON.stringify(orderData));
-    cart = [];
-    localStorage.setItem('jennyCart', JSON.stringify(cart));
-    setTimeout(() => { window.location.href = 'order-confirmation.php'; }, 600);
+
+    fetch('process-order.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderData)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            if (data.order_num) orderData.orderNum = data.order_num;
+            if (data.order_id) orderData.orderId = data.order_id;
+            localStorage.setItem('jennyLastOrder', JSON.stringify(orderData));
+            cart = [];
+            localStorage.setItem('jennyCart', JSON.stringify(cart));
+            if (typeof updateCartUI === 'function') updateCartUI();
+            setTimeout(() => { window.location.href = 'order-confirmation.php'; }, 400);
+        } else {
+            alert('Order placement failed: ' + (data.message || 'Please try again.'));
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-shield-halved"></i>&nbsp; Place Order Now';
+        }
+    })
+    .catch(err => {
+        console.error('Order Submission Error:', err);
+        localStorage.setItem('jennyLastOrder', JSON.stringify(orderData));
+        cart = [];
+        localStorage.setItem('jennyCart', JSON.stringify(cart));
+        if (typeof updateCartUI === 'function') updateCartUI();
+        setTimeout(() => { window.location.href = 'order-confirmation.php'; }, 400);
+    });
 }
 
 function copyToClipboard(text, msg) {
@@ -975,7 +1093,7 @@ function updateCheckoutSidebar() {
 }
 
 function updateSidebarTotals() {
-    const subtotal = (typeof cart !== 'undefined' ? cart : []).reduce((s, i) => s + i.price * i.quantity, 0);
+    const subtotal = (typeof cart !== 'undefined' ? cart : []).reduce((s, i) => s + (parseFloat(i.price) || 0) * (parseInt(i.quantity) || 1), 0);
     const total = subtotal + shippingCost;
     const sub = document.getElementById('sidebarSubtotal');
     const sh  = document.getElementById('sidebarShipping');
@@ -988,6 +1106,10 @@ function updateSidebarTotals() {
 window.addEventListener('DOMContentLoaded', function() {
     if (typeof updateCartUI === 'function') updateCartUI();
     updateCheckoutSidebar();
+    const dobInput = document.getElementById('checkoutDob');
+    if (dobInput && dobInput.value) {
+        validateCheckoutAge(dobInput);
+    }
 });
 </script>
 </body>

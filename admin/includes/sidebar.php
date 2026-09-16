@@ -15,10 +15,9 @@ $adminName = $_SESSION['admin_name'] ?? 'Admin';
 ?>
 <aside class="admin-sidebar" id="adminSidebar">
     <div class="sidebar-logo">
-        <div class="logo-icon"><i class="fas fa-gem"></i></div>
+        <div class="logo-icon"><img src="../img/favicon-32x32.png" alt="Jenny's" style="width:28px;height:28px;object-fit:contain;border-radius:4px;"></div>
         <div>
             <div class="logo-text">Jenny's <span>Admin</span></div>
-            <div class="logo-sub">Control Panel v2.0</div>
         </div>
     </div>
 

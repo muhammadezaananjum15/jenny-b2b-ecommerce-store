@@ -37,12 +37,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Update existing admin
                 $pdo->prepare("UPDATE users SET password = ?, username = ?, role = 'admin', is_admin = 1 WHERE email = ?")
                     ->execute([$hash, $username, $email]);
-                $message = "<i class="fas fa-check-circle"></i> Admin password updated! Email: <strong>$email</strong> | Password: <strong>$password</strong>";
+                $message = '<i class="fas fa-check-circle"></i> Admin password updated! Email: <strong>' . htmlspecialchars($email) . '</strong> | Password: <strong>' . htmlspecialchars($password) . '</strong>';
             } else {
                 // Create new admin
                 $pdo->prepare("INSERT INTO users (username, email, password, role, is_admin) VALUES (?, ?, ?, 'admin', 1)")
                     ->execute([$username, $email, $hash]);
-                $message = "<i class="fas fa-check-circle"></i> Admin created! Email: <strong>$email</strong> | Password: <strong>$password</strong>";
+                $message = '<i class="fas fa-check-circle"></i> Admin created! Email: <strong>' . htmlspecialchars($email) . '</strong> | Password: <strong>' . htmlspecialchars($password) . '</strong>';
             }
             $msgType = 'success';
         } catch (PDOException $e) {

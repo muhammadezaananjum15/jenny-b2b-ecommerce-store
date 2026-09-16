@@ -1,3 +1,11 @@
+<?php
+// Ensure session and DB are always available in header.php
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
+if (!isset($pdo)) {
+    $dbPath = __DIR__ . '/../config/db.php';
+    if (file_exists($dbPath)) { require_once $dbPath; }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -473,7 +481,7 @@
                 <?php if (isset($_SESSION['user_id']) || !empty($_SESSION['admin_logged_in'])): ?>
                     <?php
                     $navAvatar = null;
-                    if (!empty($_SESSION['user_id'])) {
+                    if (!empty($_SESSION['user_id']) && isset($pdo)) {
                         try {
                             $avStmt = $pdo->prepare("SELECT profile_image FROM users WHERE id = ?");
                             $avStmt->execute([$_SESSION['user_id']]);

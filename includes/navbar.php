@@ -46,7 +46,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                 <a href="best-sellers.php">Best Sellers</a>
             </li>
             <li class="<?= $currentPage === 'offers.php' ? 'active' : '' ?>">
-                <a href="offers.php">Offers <span class="nav-hot-badge">HOT</span></a>
+                <a href="offers.php">Offers</a>
             </li>
             <li class="<?= $currentPage === 'about.php' ? 'active' : '' ?>">
                 <a href="about.php">About Us</a>

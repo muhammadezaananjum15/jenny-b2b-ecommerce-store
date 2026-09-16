@@ -28,9 +28,6 @@ if (isset($pdo)) {
     } catch (Exception $e) {}
 }
 ?>
-<!-- ============================================================ -->
-<!-- HERO CAROUSEL -->
-<!-- ============================================================ -->
 <section class="hero-carousel" id="heroCarousel">
     <canvas id="heroParticleCanvas" class="hero-particle-canvas"></canvas>
 
@@ -41,9 +38,6 @@ if (isset($pdo)) {
                 <div class="slide-bg" style="background-image: url('img/<?= htmlspecialchars($slide['image']) ?>');"></div>
                 <div class="slide-overlay"></div>
                 <div class="slide-content">
-                    <?php if (!empty($slide['badge_text'])): ?>
-                    <div class="slide-badge" <?= $idx === 0 ? 'data-anim="badge"' : '' ?>><?= htmlspecialchars($slide['badge_text']) ?></div>
-                    <?php endif; ?>
                     <h3 <?= $idx === 0 ? 'data-anim="sub"' : '' ?>><?= htmlspecialchars($slide['subtitle']) ?></h3>
                     <h1 <?= $idx === 0 ? 'data-anim="title"' : '' ?>><?= htmlspecialchars($slide['title']) ?> <span><?= htmlspecialchars($slide['title_highlight']) ?></span></h1>
                     <p <?= $idx === 0 ? 'data-anim="desc"' : '' ?>><?= htmlspecialchars($slide['description']) ?></p>
@@ -64,7 +58,6 @@ if (isset($pdo)) {
                 <div class="slide-bg" style="background-image: url('img/hero-ai-beauty.png');"></div>
                 <div class="slide-overlay"></div>
                 <div class="slide-content">
-                    <div class="slide-badge" data-anim="badge"><i class="fas fa-sparkles"></i> Premium Collection</div>
                     <h3 data-anim="sub">Elevate Your</h3>
                     <h1 data-anim="title">Beauty &amp; <span>Shine</span></h1>
                     <p data-anim="desc">Premium cosmetics &amp; imitation jewelry crafted for the modern woman. Discover high-pigment formulas &amp; royal elegance.</p>
@@ -79,7 +72,6 @@ if (isset($pdo)) {
                 <div class="slide-bg" style="background-image: url('img/hero-ai-cosmetics.png');"></div>
                 <div class="slide-overlay"></div>
                 <div class="slide-content">
-                    <div class="slide-badge"><i class="fas fa-magic"></i> Ultra Cosmetics</div>
                     <h3>Luxury Makeup</h3>
                     <h1>Flawless <span>Glamour</span></h1>
                     <p>Long-lasting matte lipsticks, silk foundations, and highlighters for a luminous complexion.</p>
@@ -94,7 +86,6 @@ if (isset($pdo)) {
                 <div class="slide-bg" style="background-image: url('img/hero-ai-jewelry.png');"></div>
                 <div class="slide-overlay"></div>
                 <div class="slide-content">
-                    <div class="slide-badge"><i class="fas fa-gem"></i> Imitation Jewelry</div>
                     <h3>Royal Craftsmanship</h3>
                     <h1>Shine Like <span>Gold</span></h1>
                     <p>Exquisite bridal sets, gold-plated necklaces, rings, and earrings designed for royalty.</p>
@@ -126,9 +117,6 @@ if (isset($pdo)) {
     </div>
 </section>
 
-<!-- ============================================================ -->
-<!-- FEATURES BAR -->
-<!-- ============================================================ -->
 <section class="features">
     <div class="feature-item" data-aos="fade-up" data-aos-delay="0">
         <i class="fas fa-gem"></i>
@@ -148,9 +136,6 @@ if (isset($pdo)) {
     </div>
 </section>
 
-<!-- ============================================================ -->
-<!-- SHOP BY CATEGORY -->
-<!-- ============================================================ -->
 <section class="featured-categories" id="featuredCategories">
     <div class="section-header" data-aos="fade-up">
         <h2 class="section-title">Shop by <span style="color:var(--primary-gold)">Category</span></h2>
@@ -214,9 +199,6 @@ if (isset($pdo)) {
     </div>
 </section>
 
-<!-- ============================================================ -->
-<!-- STATS COUNTER SECTION -->
-<!-- ============================================================ -->
 <section class="stats-section">
     <div class="stats-container">
         <div class="stat-item" data-aos="fade-up" data-aos-delay="0">
@@ -242,9 +224,6 @@ if (isset($pdo)) {
     </div>
 </section>
 
-<!-- ============================================================ -->
-<!-- BRAND STORY SECTION -->
-<!-- ============================================================ -->
 <section class="brand-story">
     <div class="story-img-col" data-aos="fade-right">
         <div class="story-img-stack">
@@ -269,9 +248,6 @@ if (isset($pdo)) {
     </div>
 </section>
 
-<!-- ============================================================ -->
-<!-- WHY CHOOSE US -->
-<!-- ============================================================ -->
 <section class="why-us-section">
     <div class="section-header" data-aos="fade-up">
         <h2 class="section-title">Why Choose <span style="color:var(--primary-gold)">Jenny's</span></h2>
@@ -311,9 +287,6 @@ if (isset($pdo)) {
     </div>
 </section>
 
-<!-- ============================================================ -->
-<!-- FEATURED PRODUCTS -->
-<!-- ============================================================ -->
 <section class="featured-products-section">
     <div class="section-header" data-aos="fade-up">
         <h2 class="section-title">Featured <span style="color:var(--primary-gold)">Products</span></h2>
@@ -334,8 +307,6 @@ if (isset($pdo)) {
             foreach ($featured as $p):
         ?>
         <div class="fp-card" data-aos="fade-up">
-            <?php if (!empty($p['is_new'])): ?><span class="fp-badge fp-new">New</span><?php endif; ?>
-            <?php if (!empty($p['is_bestseller'])): ?><span class="fp-badge fp-best">Best</span><?php endif; ?>
             <?php if (!empty($p['discount_percent']) && $p['discount_percent'] > 0): ?><span class="fp-badge fp-off">-<?= $p['discount_percent'] ?>%</span><?php endif; ?>
             <div class="fp-img-wrap">
                 <img src="img/<?= htmlspecialchars($p['image'] ?? 'foundation.jpg') ?>" onerror="this.src='img/foundation.jpg'" alt="<?= htmlspecialchars($p['name'] ?? 'Product') ?>" loading="lazy">
@@ -402,10 +373,6 @@ if (isset($pdo)) {
     </div>
 </section>
 
-<!-- ============================================================ -->
-<!-- ============================================================ -->
-<!-- PROMO BANNER & STYLING -->
-<!-- ============================================================ -->
 <style>
 .promo-banner {
     background: linear-gradient(135deg, #0F0F0F 0%, #1A1A1A 50%, #121212 100%) !important;
@@ -582,9 +549,6 @@ if (isset($pdo)) {
     </div>
 </section>
 
-<!-- ============================================================ -->
-<!-- TESTIMONIALS -->
-<!-- ============================================================ -->
 <section class="testimonials-section">
     <div class="section-header" data-aos="fade-up">
         <h2 class="section-title">What Our <span style="color:var(--primary-gold)">Clients</span> Say</h2>
@@ -661,9 +625,6 @@ if (isset($pdo)) {
     <div class="testi-dots" id="testiDots"></div>
 </section>
 
-<!-- ============================================================ -->
-<!-- INSTAGRAM / PRODUCT GRID -->
-<!-- ============================================================ -->
 <section class="insta-grid-section" data-aos="fade-up">
     <div class="section-header">
         <h2 class="section-title">Our <span style="color:var(--primary-gold)">Collection</span></h2>

@@ -34,10 +34,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <link rel="stylesheet" href="css/style.css">
 <?php require 'includes/navbar.php'; ?>
 
-<!-- ============================================ -->
-<!-- ============================================ -->
-<!-- HERO BANNER (CONTACT US) -->
-<!-- ============================================ -->
 <section class="contact-hero">
     <canvas id="contactParticleCanvas" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none;"></canvas>
     <div class="contact-hero-content" data-aos="fade-up">
@@ -46,9 +42,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 </section>
 
-<!-- ============================================ -->
-<!-- CONTACT SECTION -->
-<!-- ============================================ -->
 <section class="contact-section" id="contact-form">
     <div class="contact-container">
         
@@ -159,9 +152,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 </section>
 
-<!-- ============================================ -->
-<!-- GOOGLE MAP SECTION -->
-<!-- ============================================ -->
 <section class="map-section" style="padding:0 5% 60px;">
     <h2 class="section-title" style="text-align: center;margin-bottom:30px;">Find Us on <span style="color: var(--primary-gold);">Map</span></h2>
     <div class="map-container" style="border-radius:15px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.1);">

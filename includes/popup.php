@@ -1,6 +1,3 @@
-<!-- ============================================ -->
-<!-- PRODUCT QUICK VIEW POPUP (MODAL) -->
-<!-- ============================================ -->
 <div class="product-popup-overlay" id="productPopupOverlay" onclick="closeProductPopup()"></div>
 
 <div class="product-popup-modal" id="productPopupModal">

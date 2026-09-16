@@ -4,8 +4,11 @@ session_start();
 require_once '../config/db.php';
 require_once 'session.php';
 
+$redirect = trim($_GET['redirect'] ?? $_POST['redirect'] ?? '');
+$target   = (!empty($redirect) && strpos($redirect, '..') === false) ? "../" . ltrim($redirect, '/') : "../index.php";
+
 if (isLoggedIn()) {
-    header(isAdmin() ? "Location: ../admin/index.php" : "Location: ../index.php");
+    header(isAdmin() ? "Location: ../admin/index.php" : "Location: $target");
     exit();
 }
 
@@ -56,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         try { $pdo->prepare("UPDATE users SET last_login=NOW() WHERE id=?")->execute([$user['id']]); } catch(Exception $ex){}
                         header("Location: ../admin/index.php"); exit();
                     }
-                    header("Location: ../index.php"); exit();
+                    header("Location: $target"); exit();
                 }
             } else {
                 $error = 'Invalid credentials. Please check your email/username and password.';
@@ -234,14 +237,16 @@ a { text-decoration: none; color: inherit; }
 
 /* ── FORM PANEL (right) ── */
 .auth-form-panel {
-    width: 480px;
-    min-width: 480px;
+    width: 520px;
+    max-width: 100vw;
+    flex: 0 0 auto;
     background: var(--surface);
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 56px 48px;
+    padding: 48px 40px;
     overflow-y: auto;
+    box-sizing: border-box;
 }
 
 /* ── FORM HEADER ── */
@@ -313,7 +318,7 @@ a { text-decoration: none; color: inherit; }
     transition: color 0.2s;
 }
 
-.input-wrap { position: relative; }
+.input-wrap { position: relative; width: 100%; }
 
 .input-icon {
     position: absolute;
@@ -328,7 +333,7 @@ a { text-decoration: none; color: inherit; }
 
 .form-input {
     width: 100%;
-    padding: 14px 16px 14px 44px;
+    padding: 14px 44px 14px 44px;
     background: var(--surface2);
     border: 1.5px solid var(--border);
     border-radius: var(--radius-sm);
@@ -337,6 +342,7 @@ a { text-decoration: none; color: inherit; }
     font-family: 'Poppins', sans-serif;
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    box-sizing: border-box;
 }
 
 .form-input::placeholder { color: var(--text-dim); }
@@ -364,17 +370,18 @@ a { text-decoration: none; color: inherit; }
 /* ── PASSWORD TOGGLE ── */
 .pass-toggle {
     position: absolute;
-    right: 14px;
+    right: 12px;
     top: 50%;
     transform: translateY(-50%);
     background: none;
     border: none;
     color: var(--text-dim);
     cursor: pointer;
-    padding: 4px;
+    padding: 4px 6px;
     border-radius: 4px;
     line-height: 1;
     transition: color 0.2s;
+    z-index: 2;
 }
 .pass-toggle:hover { color: var(--gold); }
 
@@ -648,9 +655,9 @@ a { text-decoration: none; color: inherit; }
 }
 
 /* ── RESPONSIVE ── */
-@media (max-width: 1024px) {
+@media (max-width: 1200px) {
     .auth-hero { padding: 48px 40px; }
-    .auth-form-panel { width: 440px; min-width: 440px; padding: 48px 36px; }
+    .auth-form-panel { width: 480px; max-width: 100vw; padding: 36px 28px; }
 }
 
 @media (max-width: 768px) {
@@ -659,14 +666,14 @@ a { text-decoration: none; color: inherit; }
     .auth-form-panel {
         width: 100%;
         min-width: 100%;
-        padding: 48px 24px;
+        padding: 36px 20px;
         justify-content: flex-start;
-        padding-top: 64px;
+        padding-top: 48px;
     }
 }
 
 @media (max-width: 360px) {
-    .auth-form-panel { padding: 40px 16px; }
+    .auth-form-panel { padding: 32px 14px; }
     .social-btns { flex-direction: column; }
 }
 </style>
@@ -712,7 +719,7 @@ a { text-decoration: none; color: inherit; }
     <p class="form-eyebrow">Welcome back</p>
     <h2 class="form-title">Sign In to<br>Your Account</h2>
     <p class="form-subtitle">
-        Don't have an account? <a href="register.php">Create one here &rarr;</a>
+        Don't have an account? <a href="register.php<?= !empty($redirect) ? '?redirect='.urlencode($redirect) : '' ?>">Create one here &rarr;</a>
     </p>
 
     <?php if ($error): ?>
@@ -722,7 +729,8 @@ a { text-decoration: none; color: inherit; }
     </div>
     <?php endif; ?>
 
-    <form id="loginForm" method="POST" action="login.php" novalidate>
+    <form id="loginForm" method="POST" action="login.php<?= !empty($redirect) ? '?redirect='.urlencode($redirect) : '' ?>" novalidate>
+        <input type="hidden" name="redirect" value="<?= htmlspecialchars($redirect) ?>">
         <div class="form-group">
             <label class="form-label" for="login_input">Email or Username</label>
             <div class="input-wrap">

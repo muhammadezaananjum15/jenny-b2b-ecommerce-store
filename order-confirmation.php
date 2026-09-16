@@ -308,6 +308,45 @@ $order = $_SESSION['last_order'] ?? null;
             </div>
         </div>
 
+        <!-- WHATSAPP PAYMENT NOTICE (shown for non-COD orders) -->
+        <?php
+        $paymentMethod = strtolower($order['payment'] ?? 'cod');
+        if ($paymentMethod !== 'cod' && $paymentMethod !== 'cash on delivery'):
+        ?>
+        <div style="display:flex;align-items:flex-start;gap:14px;background:linear-gradient(135deg,#e7fbe9,#d4f5d8);border:1.5px solid #4CAF50;border-radius:16px;padding:20px 22px;margin-bottom:24px;text-align:left;">
+            <div style="width:48px;height:48px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:#fff;flex-shrink:0;">
+                <i class="fab fa-whatsapp"></i>
+            </div>
+            <div style="flex:1;">
+                <strong style="font-size:0.95rem;color:#155724;display:block;margin-bottom:6px;">📸 Next Step: Send Payment Screenshot on WhatsApp</strong>
+                <p style="font-size:0.84rem;color:#276a30;margin:0 0 10px;line-height:1.6;">
+                    Your order is <strong>pending payment verification</strong>. Please <strong>send a screenshot</strong> of your <?= htmlspecialchars(strtoupper($order['payment'] ?? '')) ?> transaction to our WhatsApp. We will verify it shortly and confirm your order.
+                </p>
+                <a href="https://wa.me/923001234567?text=Hi!+I+just+placed+Order+%23<?= urlencode($order['order_id'] ?? '') ?>+and+am+sending+my+payment+screenshot+for+verification." target="_blank"
+                   style="display:inline-flex;align-items:center;gap:8px;background:#25D366;color:#fff;padding:10px 20px;border-radius:24px;font-size:0.85rem;font-weight:700;text-decoration:none;transition:0.2s;">
+                    <i class="fab fa-whatsapp"></i> Send Screenshot — +92 300 1234567
+                </a>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <!-- JS FALLBACK: show notice if paid via localStorage (non-COD) -->
+        <div id="jsWhatsappNotice" style="display:none;align-items:flex-start;gap:14px;background:linear-gradient(135deg,#e7fbe9,#d4f5d8);border:1.5px solid #4CAF50;border-radius:16px;padding:20px 22px;margin-bottom:24px;text-align:left;">
+            <div style="width:48px;height:48px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:#fff;flex-shrink:0;">
+                <i class="fab fa-whatsapp"></i>
+            </div>
+            <div style="flex:1;">
+                <strong style="font-size:0.95rem;color:#155724;display:block;margin-bottom:6px;">📸 Next Step: Send Payment Screenshot on WhatsApp</strong>
+                <p style="font-size:0.84rem;color:#276a30;margin:0 0 10px;line-height:1.6;">
+                    Your order is <strong>pending payment verification</strong>. Please <strong>send a screenshot</strong> of your payment transaction to our WhatsApp. We will verify it shortly and confirm your order.
+                </p>
+                <a href="https://wa.me/923001234567" target="_blank" id="jsWhatsappLink"
+                   style="display:inline-flex;align-items:center;gap:8px;background:#25D366;color:#fff;padding:10px 20px;border-radius:24px;font-size:0.85rem;font-weight:700;text-decoration:none;">
+                    <i class="fab fa-whatsapp"></i> Send Screenshot — +92 300 1234567
+                </a>
+            </div>
+        </div>
+
         <!-- PHP SESSION ORDER DETAILS (or populated via JS) -->
         <div id="orderDetailsCard">
             <?php if ($order): ?>
@@ -401,6 +440,19 @@ window.addEventListener('DOMContentLoaded', function() {
                     <div class="order-row"><span class="label">Address</span><span class="value">${o.address || ' | '}, ${o.city || ''}</span></div>
                 </div>
             `;
+
+            // Show WhatsApp notice for non-COD payments loaded from localStorage
+            const pm = (o.payment || 'cod').toLowerCase();
+            if (pm !== 'cod' && pm !== 'cash on delivery') {
+                const jsNotice = document.getElementById('jsWhatsappNotice');
+                if (jsNotice) {
+                    jsNotice.style.display = 'flex';
+                    const link = document.getElementById('jsWhatsappLink');
+                    if (link) {
+                        link.href = `https://wa.me/923001234567?text=Hi!+I+just+placed+Order+%23${encodeURIComponent(o.orderNum || '')}+and+am+sending+my+${encodeURIComponent(pm.toUpperCase())}+payment+screenshot+for+verification.`;
+                    }
+                }
+            }
         } catch(e) {}
     }
 
